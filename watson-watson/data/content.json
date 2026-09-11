@@ -1,0 +1,43 @@
+{
+  "speakers": [
+    {
+      "id": "dr-jamal-watson",
+      "name": "Dr. Jamal Watson",
+      "role": "Founder & Principal",
+      "bio": "Professor, award-winning journalist, and author whose work sits at the crossroads of higher education, civil rights, and American political history. Former executive editor of Diverse: Issues In Higher Education and professor of Strategic Communications at Trinity Washington University.",
+      "topics": ["Leadership", "Higher Education Equity", "Student Debt & Civil Rights", "Black Political & Religious History"],
+      "image": "assets/img/ww-jamal-watson.png"
+    },
+    {
+      "id": "dr-melanie-hill",
+      "name": "Dr. Melanie R. Hill",
+      "role": "Author, Scholar and Violinist",
+      "bio": "Andrew W. Mellon Associate Professor of Global Racial Justice and Associate Professor of American Literature at Rutgers University, Newark. Her book Colored Women Sittin' on High (UNC Press) is endorsed by Alice Walker and Ruby Sales.",
+      "topics": ["African American Literature", "Black Music Performance", "Womanist Thought"],
+      "image": "assets/img/ww-melanie-hill.jpg"
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "t1",
+      "quote": "Watson & Watson brought clarity to a complex strategic planning process and left our leadership team stronger than they found it.",
+      "name": "Client Name",
+      "title": "University President",
+      "image": "assets/img/ww-t1.jpg"
+    },
+    {
+      "id": "t2",
+      "quote": "The keynote was the highlight of our conference — substantive, inspiring, and exactly what our audience needed to hear.",
+      "name": "Client Name",
+      "title": "Conference Chair",
+      "image": "assets/img/ww-t2.jpg"
+    },
+    {
+      "id": "t3",
+      "quote": "Their board governance training transformed how we work together. We recommend them without reservation.",
+      "name": "Client Name",
+      "title": "Board Chair, Nonprofit",
+      "image": "assets/img/ww-t3.jpg"
+    }
+  ]
+}

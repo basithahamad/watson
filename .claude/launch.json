@@ -2,10 +2,16 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "static-sites",
-      "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "8742"],
+      "name": "helf-cms",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["helf-review/server.js"],
       "port": 8742
+    },
+    {
+      "name": "watson-cms",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["watson-watson/server.js"],
+      "port": 8743
     }
   ]
 }
