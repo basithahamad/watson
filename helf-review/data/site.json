@@ -26,6 +26,26 @@
     "commentaryHeading": "Commentary & Voices",
     "subscribeHeading": "Get The H.E.L.F Review in your inbox"
   },
+  "commentary": [
+    {
+      "quote": "We just knew that there was something — there was a void. And we couldn't codify it. We initially thought we needed a gathering space for like-minded individuals who want to serve at HBCUs.",
+      "name": "Dr. Herman J. Felton Jr.",
+      "title": "President & CEO, Wiley University · from “Lightning in a Bottle”",
+      "image": "assets/img/helf-a1.jpg"
+    },
+    {
+      "quote": "Placeholder pull quote — commentary cards highlight the voices and perspectives of the H.E.L.F. community of leaders.",
+      "name": "Author Name",
+      "title": "Title, Institution",
+      "image": "assets/img/helf-a2.jpg"
+    },
+    {
+      "quote": "Placeholder pull quote — each card links to the full opinion article with the author's biography and photo.",
+      "name": "Author Name",
+      "title": "Title, Institution",
+      "image": "assets/img/helf-a3.jpg"
+    }
+  ],
   "footer": {
     "blurb": "Published by the Higher Education Leadership Foundation, The H.E.L.F Review delivers news, analysis, and commentary on the trends, challenges, and leaders shaping HBCUs and higher education broadly.",
     "parentLinkLabel": "H.E.L.F Main Site ↗",

@@ -1,22 +1,23 @@
 # Deploy — both sites
 
-Two **separate** Vercel projects from this one repo. Each subfolder is its own site.
+Two **independent Next.js apps** in one repo. Each is its own Vercel project.
 
 | | The H.E.L.F Review | Watson & Watson |
 |---|---|---|
 | Vercel Root Directory | `helf-review` | `watson-watson` |
 | Local dev | `npm run dev` → http://localhost:8742 | `npm run dev` → http://localhost:8743 |
-| Admin page | `/admin.html` | `/admin.html` |
+| Public site | `/` | `/` |
+| Article page | `/article/<id>` | — |
+| CMS admin | `/admin` | `/admin` |
 | Content API | `/api/articles` | `/api/content` |
 | Site copy API | `/api/site` | `/api/site` |
 
-Each project stores two documents in Blob: its content list
-(`helf-review/articles.json` / `watson-watson/content.json`) and its page copy
-(`<project>/site.json`). The checked-in `data/*.json` files are the seed and the
-fallback — if Blob has never been written, the API serves them.
+Next.js 16 (App Router). Vercel auto-detects the framework — no build settings to
+configure beyond the Root Directory.
 
-Framework Preset: **Other**. No build command, no output directory — Vercel serves the
-static files and turns `api/*.js` into serverless functions automatically.
+Public pages are **server components**: they read the JSON directly through
+`lib/store.js` and render on the server, so content published in the admin appears
+on the next request with no rebuild. There is no visitor login on either site.
 
 ---
 
@@ -32,14 +33,12 @@ Do this before the first deploy — it's fiddly to change after.
 Project → **Storage** → Create Database → **Blob** → Connect.
 This injects `BLOB_READ_WRITE_TOKEN` automatically. Don't set it by hand.
 
-> Without this token the API silently falls back to writing a local file, which on
-> Vercel means **edits vanish on the next deploy**. This step is not optional.
+> Without this token the app falls back to the checked-in `data/*.json`, which on
+> Vercel is a read-only filesystem — **edits will not persist**. Not optional.
 
 **4. Set the admin password.**
 Project → Settings → Environment Variables → add `ADMIN_CODE` for all environments.
-Use a different value per site.
-
-Generate one:
+Use a different value per site. Generate one:
 ```
 node -e "console.log(require('crypto').randomBytes(9).toString('base64url'))"
 ```
@@ -47,53 +46,68 @@ node -e "console.log(require('crypto').randomBytes(9).toString('base64url'))"
 > **Never commit the value.** Keep it in Vercel's env settings and your password
 > manager only — this file is in the repo.
 
-> **This is the important one.** The code falls back to a hardcoded default if the
-> variable is missing — see `api/articles.js:11` and `api/content.js:9`. Those
-> defaults are in the repo, so anyone reading it could edit the live site.
-> Set `ADMIN_CODE` or don't go live.
+> The code falls back to a hardcoded default if the variable is missing (see
+> `lib/store.js`). That default is in the repo, so anyone reading it could edit the
+> live site. Set `ADMIN_CODE` or don't go live.
 
 **5. Redeploy** after adding env vars — they only apply to new deployments.
 
 **6. Smoke test:**
 ```
-curl https://YOUR-SITE.vercel.app/api/articles                 # 200 + JSON
-curl -X POST https://YOUR-SITE.vercel.app/api/articles \
-  -H 'content-type: application/json' -d '{"title":"x"}'       # 401 unauthorized
+curl https://YOUR-SITE.vercel.app/api/site                      # 200 + JSON
+curl -X PUT https://YOUR-SITE.vercel.app/api/site \
+  -H 'content-type: application/json' -d '{}'                   # 401 unauthorized
 ```
-Then open `/admin.html`, enter the admin code, add a test post, confirm it appears on
-the homepage, and delete it.
+Then open `/admin`, sign in, make a small edit, publish, and confirm it appears on `/`.
 
 ---
 
-## Handing over to the client
+## Project layout
 
-Send Jamal: the site URL, the `/admin.html` URL, and the admin code. One shared code per
-site — there are no individual user accounts.
+```
+<site>/
+  app/
+    layout.js          fonts + metadata
+    globals.css        the original stylesheet, unchanged
+    page.js            public home page (server component)
+    article/[id]/      article page            (HELF only)
+    admin/             CMS admin (client component) + admin.css + siteSchema.js
+    api/…/route.js     route handlers
+  lib/store.js         Blob in production, data/*.json in dev; auth + merge helpers
+  data/*.json          seed and fallback content
+  public/assets/img/   images
+```
 
 ## What the client can edit
 
 Both admins have a **Site Content** tab covering the wording on the public page —
-headings, body copy, button labels, contact details, footer. On the Watson site the
-repeatable blocks (services, book endorsements, hero statistics, contact rows, social
-links) can also be added, removed and reordered.
+headings, body copy, button labels, contact details, footer. Watson's repeatable
+blocks (services, book endorsements, hero statistics, contact rows, social links)
+and HELF's commentary cards can be added, removed and reordered.
 
-Layout, colours, fonts and section order are **deliberately not editable**. Every
-bound element carries a `data-edit` / `data-list` attribute in `index.html`, and the
-HTML keeps its original copy as a fallback, so the page still renders correctly if the
-API is unreachable.
+HELF additionally has full article management: create, edit, delete, feature on the
+homepage, and **Draft / Published** status. Drafts are filtered out in the API, so
+draft content is never sent to a visitor and a direct link returns 404.
 
-To expose a new field: add it to `SITE_SCHEMA` in `admin.html`, add a matching
-`data-edit="section.key"` attribute in `index.html`, and seed it in `data/site.json`.
+Layout, colours, fonts and section order are deliberately not editable.
+
+To expose a new field: add it to `SITE_SCHEMA` in `app/admin/siteSchema.js`, render
+it in `app/page.js`, and seed it in `data/site.json`.
 
 ## Known limits
 
-- **One shared password per site.** No user accounts, no password reset, no rate limiting.
-- **Images are stored inline** as base64 in the content JSON (auto-downscaled to 1600px,
-  JPEG 0.85 — `admin.html:236`). Comfortable to roughly 50 articles; past that the
-  homepage payload gets heavy and images should move to Blob URLs.
-- **No drafts, preview, or revisions.** Saving publishes immediately.
-
-If the client ever needs drafts or revisions, the cheapest upgrade is headless WordPress
-as the backend — the front-ends only touch the data layer in three places
-(`helf-review/index.html:485`, `helf-review/article.html:89`,
-`watson-watson/index.html:552`), so the design and this Vercel setup stay as they are.
+- **One shared password per site.** No user accounts, no password reset, no rate
+  limiting.
+- **Images are stored inline** as base64 in the content JSON (auto-downscaled to
+  1600px, JPEG 0.85). Comfortable to roughly 50 articles; past that the payload gets
+  heavy and images should move to Blob URLs.
+- **No revision history.** Saving overwrites.
+- **The contact and newsletter forms are not wired up** — they show a placeholder
+  alert and nothing is sent or stored. HELF's search box does nothing.
+- **`next` is pinned to 16.3.4.** The 16.3.5 SWC binary for win32-x64 is missing from
+  the npm registry (the version resolves but the tarball 404s), which breaks local
+  builds on Windows. Revisit when 16.3.6 ships.
+- **The flagship "Lightning in a Bottle" article is still a static file** at
+  `public/article-lightning-in-a-bottle.html`, not CMS content — its `url` field
+  points there. New articles created in the admin use `/article/<id>` and are fully
+  CMS-managed.

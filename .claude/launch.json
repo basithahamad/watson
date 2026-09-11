@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "helf-cms",
-      "runtimeExecutable": "node",
-      "runtimeArgs": ["helf-review/server.js"],
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "helf-review"],
       "port": 8742
     },
     {
