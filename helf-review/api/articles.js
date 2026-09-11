@@ -59,11 +59,16 @@ module.exports = async (req, res) => {
   try {
     if (req.method === 'GET') {
       const arts = await load();
+      // Drafts are never served publicly. The admin sends its code on reads too,
+      // so it still sees everything. Articles written before drafts existed have
+      // no status and count as published.
+      const isAdmin = req.headers['x-admin-code'] === ADMIN_CODE;
+      const visible = isAdmin ? arts : arts.filter(a => a.status !== 'draft');
       if (id) {
-        const a = arts.find(x => x.id === id);
+        const a = visible.find(x => x.id === id);
         return a ? res.status(200).json(a) : res.status(404).json({ error: 'not found' });
       }
-      return res.status(200).json(arts);
+      return res.status(200).json(visible);
     }
 
     if (req.headers['x-admin-code'] !== ADMIN_CODE)

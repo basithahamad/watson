@@ -47,6 +47,7 @@
   .t-title small{display:block;font-weight:500;color:var(--muted);font-size:.76rem}
   .pill{display:inline-block;font-size:.64rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:.24rem .6rem;border-radius:999px;background:rgba(125,19,34,.08);color:var(--crimson)}
   .pill.star{background:var(--gold);color:#3a2408}
+  .pill.draft{background:#e8e8ea;color:#5c6068}
   .actions{display:flex;gap:.4rem;justify-content:flex-end}
   /* form */
   .editor{display:none}
@@ -166,6 +167,12 @@
           </div>
           <div><label>Author</label><input type="text" id="f-author" placeholder="e.g. Jamal Watson"></div>
           <div><label>Date</label><input type="text" id="f-date" placeholder="e.g. September 5, 2026"></div>
+          <div><label>Status</label>
+            <select id="f-status">
+              <option value="published">Published — visible on the site</option>
+              <option value="draft">Draft — only visible here</option>
+            </select>
+          </div>
           <div class="check"><input type="checkbox" id="f-featured"><label style="margin:0;text-transform:none;letter-spacing:0;font-size:.86rem">Feature on homepage hero</label></div>
           <div class="full"><label>Excerpt / summary</label><textarea id="f-excerpt" placeholder="One or two sentences shown in article lists…"></textarea></div>
           <div class="full">
@@ -293,14 +300,16 @@ async function saveSite(){
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
 
 async function loadList(){
-  const arts=await (await fetch('/api/articles')).json();
+  const arts=await (await fetch('/api/articles',{headers:hdrs()})).json();
   document.getElementById('rows').innerHTML = arts.map(a=>`
     <tr>
       <td>${a.image?`<img class="thumb" src="${esc(a.image)}">`:'<span class="thumb"></span>'}</td>
       <td class="t-title">${esc(a.title)}<small>${esc(a.date||'')}</small></td>
       <td class="t-hide"><span class="pill">${esc(a.category||'News')}</span></td>
       <td class="t-hide">${esc(a.author||'—')}</td>
-      <td>${a.featured?'<span class="pill star">★ Featured</span>':'<span class="pill">Published</span>'}</td>
+      <td>${a.status==='draft'
+            ?'<span class="pill draft">Draft</span>'
+            :(a.featured?'<span class="pill star">★ Featured</span>':'<span class="pill">Published</span>')}</td>
       <td><div class="actions">
         <a class="btn btn-ghost btn-sm" href="${a.url?esc(a.url):'article.html?id='+encodeURIComponent(a.id)}" target="_blank">View</a>
         <button class="btn btn-ghost btn-sm" onclick='edit(${JSON.stringify(a.id)})'>Edit</button>
@@ -316,6 +325,8 @@ function openEditor(a){
   document.getElementById('f-author').value=a?.author||'';
   document.getElementById('f-date').value=a?.date||new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
   document.getElementById('f-excerpt').value=a?.excerpt||'';
+  // articles created before drafts existed have no status — treat them as published
+  document.getElementById('f-status').value=a?.status==='draft'?'draft':'published';
   document.getElementById('f-featured').checked=!!a?.featured;
   document.getElementById('f-body').innerHTML=a?.body||'';
   const prev=document.getElementById('img-preview'), hint=document.getElementById('img-hint');
@@ -356,6 +367,7 @@ async function save(e){
     author:document.getElementById('f-author').value.trim(),
     date:document.getElementById('f-date').value.trim(),
     excerpt:document.getElementById('f-excerpt').value.trim(),
+    status:document.getElementById('f-status').value,
     featured:document.getElementById('f-featured').checked,
     body:document.getElementById('f-body').innerHTML,
     image:imageData
@@ -363,7 +375,7 @@ async function save(e){
   const r = editingId
     ? await fetch('/api/articles?id='+encodeURIComponent(editingId),{method:'PUT',headers:hdrs(),body:JSON.stringify(body)})
     : await fetch('/api/articles',{method:'POST',headers:hdrs(),body:JSON.stringify(body)});
-  if(r.ok){toast(editingId?'Article updated ✓':'Article published ✓');closeEditor()}
+  if(r.ok){toast(body.status==='draft'?'Saved as draft ✓':(editingId?'Article updated ✓':'Article published ✓'));closeEditor()}
   else toast('Save failed — check access code');
 }
 async function removeArticle(){
