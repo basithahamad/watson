@@ -1,28 +1,33 @@
-// Watson & Watson Associates — site content API (Vercel serverless function)
-// Manages speakers + testimonials as one document.
+// The H.E.L.F Review — editable site copy (Vercel serverless function)
+// Everything on the page that is words rather than layout. Structure stays fixed.
 // Storage: Vercel Blob when deployed, local file in dev.
-// Routes:  GET /api/content   → full content document
-//          PUT /api/content   → replace document (requires x-admin-code)
+// Routes:  GET /api/site   → full copy document
+//          PUT /api/site   → replace document (requires x-admin-code)
 const fs = require('fs');
 const path = require('path');
 
-const ADMIN_CODE = process.env.ADMIN_CODE || 'watson2026';
-const BLOB_PATH = 'watson-watson/content.json';
+const ADMIN_CODE = process.env.ADMIN_CODE || 'helf2026';
+const BLOB_PATH = 'helf-review/site.json';
 // resolve from this module, not cwd — dev server may be launched from the repo root
-const LOCAL = path.join(__dirname, '..', 'data', 'content.json');
+const LOCAL = path.join(__dirname, '..', 'data', 'site.json');
 
-const SEED = { speakers: [], testimonials: [] };
+// The checked-in file is the seed and the fallback. If the Blob has never been
+// written, or a save arrives with keys missing, we fall back to it rather than
+// serving a half-empty page.
+function seed() {
+  try { return JSON.parse(fs.readFileSync(LOCAL, 'utf8')); } catch { return {}; }
+}
 
 async function load() {
   if (process.env.BLOB_READ_WRITE_TOKEN) {
     const { list } = require('@vercel/blob');
     const { blobs } = await list({ prefix: BLOB_PATH });
     const b = blobs.find(x => x.pathname === BLOB_PATH);
-    if (!b) return SEED;
+    if (!b) return seed();
     const r = await fetch(b.url, { cache: 'no-store' });
     return await r.json();
   }
-  try { return JSON.parse(fs.readFileSync(LOCAL, 'utf8')); } catch { return SEED; }
+  return seed();
 }
 
 async function save(doc) {
@@ -38,6 +43,17 @@ async function save(doc) {
   }
 }
 
+// Shallow merge per top-level section, so a partial save can't blank the rest
+// of the page. Within a section the incoming value wins outright.
+function merge(base, incoming) {
+  const out = { ...base };
+  for (const [k, v] of Object.entries(incoming || {})) {
+    if (v && typeof v === 'object' && !Array.isArray(v)) out[k] = { ...(base[k] || {}), ...v };
+    else out[k] = v;
+  }
+  return out;
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   try {
@@ -47,20 +63,10 @@ module.exports = async (req, res) => {
       return res.status(401).json({ error: 'unauthorized' });
 
     if (req.method === 'PUT') {
-      // Reject anything that isn't a real document BEFORE writing. Without this
-      // a malformed or empty PUT silently saved {speakers:[],testimonials:[]}
-      // and wiped the store — which is exactly what the admin's login probe sent.
       const body = req.body;
       if (!body || typeof body !== 'object' || Array.isArray(body))
         return res.status(400).json({ error: 'expected an object' });
-      if (!Array.isArray(body.speakers) && !Array.isArray(body.testimonials))
-        return res.status(400).json({ error: 'expected speakers and/or testimonials' });
-
-      const current = await load();
-      const doc = {
-        speakers: Array.isArray(body.speakers) ? body.speakers : current.speakers || [],
-        testimonials: Array.isArray(body.testimonials) ? body.testimonials : current.testimonials || []
-      };
+      const doc = merge(await load(), body);
       await save(doc);
       return res.status(200).json(doc);
     }

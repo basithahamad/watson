@@ -8,6 +8,12 @@ Two **separate** Vercel projects from this one repo. Each subfolder is its own s
 | Local dev | `npm run dev` → http://localhost:8742 | `npm run dev` → http://localhost:8743 |
 | Admin page | `/admin.html` | `/admin.html` |
 | Content API | `/api/articles` | `/api/content` |
+| Site copy API | `/api/site` | `/api/site` |
+
+Each project stores two documents in Blob: its content list
+(`helf-review/articles.json` / `watson-watson/content.json`) and its page copy
+(`<project>/site.json`). The checked-in `data/*.json` files are the seed and the
+fallback — if Blob has never been written, the API serves them.
 
 Framework Preset: **Other**. No build command, no output directory — Vercel serves the
 static files and turns `api/*.js` into serverless functions automatically.
@@ -63,6 +69,21 @@ the homepage, and delete it.
 
 Send Jamal: the site URL, the `/admin.html` URL, and the admin code. One shared code per
 site — there are no individual user accounts.
+
+## What the client can edit
+
+Both admins have a **Site Content** tab covering the wording on the public page —
+headings, body copy, button labels, contact details, footer. On the Watson site the
+repeatable blocks (services, book endorsements, hero statistics, contact rows, social
+links) can also be added, removed and reordered.
+
+Layout, colours, fonts and section order are **deliberately not editable**. Every
+bound element carries a `data-edit` / `data-list` attribute in `index.html`, and the
+HTML keeps its original copy as a fallback, so the page still renders correctly if the
+API is unreachable.
+
+To expose a new field: add it to `SITE_SCHEMA` in `admin.html`, add a matching
+`data-edit="section.key"` attribute in `index.html`, and seed it in `data/site.json`.
 
 ## Known limits
 

@@ -224,16 +224,16 @@
     <a class="brand" href="#">
       <img class="brand-logo" src="assets/img/helf-logo.png" alt="H.E.L.F. — Higher Education Leadership Foundation crest">
       <span class="brand-name">
-        <b>The H.E.L.F <i>Review</i></b>
-        <span>Published by the Higher Education Leadership Foundation</span>
+        <b data-compose="brand.name|brand.nameEm">The H.E.L.F <i>Review</i></b>
+        <span data-edit="brand.tagline">Published by the Higher Education Leadership Foundation</span>
       </span>
     </a>
     <div class="masthead-right">
       <form class="search" onsubmit="event.preventDefault()">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input type="search" placeholder="Search stories…" aria-label="Search">
+        <input type="search" placeholder="Search stories…" aria-label="Search" data-placeholder="brand.searchPlaceholder">
       </form>
-      <a class="btn btn-crimson" href="#subscribe">Subscribe</a>
+      <a class="btn btn-crimson" href="#subscribe" data-edit="brand.subscribeLabel">Subscribe</a>
     </div>
   </div>
 </header>
@@ -302,7 +302,7 @@
     <div class="cols">
       <div>
         <div class="sec-head">
-          <h2>Latest News</h2>
+          <h2 data-edit="sections.latestHeading">Latest News</h2>
           <a href="#">View All →</a>
         </div>
         <div class="news-list">
@@ -348,12 +348,12 @@
 
       <aside>
         <div class="widget editor-w">
-          <h3>From the Editor</h3>
-          <div class="headshot"><img src="assets/img/watson-editor.png" alt="Dr. Jamal Watson, Editor of The H.E.L.F Review"></div>
-          <b>Dr. Jamal Watson</b>
-          <span class="role">Editor</span>
-          <p>Dr. Jamal Watson is the editor of The H.E.L.F Review. An award-winning journalist and author, Watson previously served as the executive editor of <em>Diverse: Issues In Higher Education</em>. He is currently a professor and associate dean of graduate studies at Trinity Washington University.</p>
-          <a class="more" href="article-lightning-in-a-bottle.html#about-the-editor">Full Bio →</a>
+          <h3 data-edit="editor.widgetHeading">From the Editor</h3>
+          <div class="headshot"><img src="assets/img/watson-editor.png" alt="Dr. Jamal Watson, Editor of The H.E.L.F Review" data-src="editor.image"></div>
+          <b data-edit="editor.name">Dr. Jamal Watson</b>
+          <span class="role" data-edit="editor.role">Editor</span>
+          <p data-edit="editor.bio">Dr. Jamal Watson is the editor of The H.E.L.F Review. An award-winning journalist and author, Watson previously served as the executive editor of <em>Diverse: Issues In Higher Education</em>. He is currently a professor and associate dean of graduate studies at Trinity Washington University.</p>
+          <a class="more" href="article-lightning-in-a-bottle.html#about-the-editor" data-edit="editor.fullBioLabel" data-href="editor.fullBioUrl">Full Bio →</a>
         </div>
         <div class="widget">
           <h3>Most Read</h3>
@@ -374,9 +374,9 @@
           </div>
         </div>
         <div class="widget about-widget" id="about-helf">
-          <h3>About The H.E.L.F Review</h3>
-          <p>Published by the Higher Education Leadership Foundation, The H.E.L.F Review delivers news, analysis, and commentary on the trends, challenges, and leaders shaping Historically Black Colleges and Universities (HBCUs) and higher education broadly — going beyond H.E.L.F.'s own mission to cover the issues defining the field today.</p>
-          <a class="btn btn-gold" style="margin-top:1.2rem" href="https://heleaders.org/" target="_blank" rel="noopener">Visit heleaders.org ↗</a>
+          <h3 data-edit="about.heading">About The H.E.L.F Review</h3>
+          <p data-edit="about.text">Published by the Higher Education Leadership Foundation, The H.E.L.F Review delivers news, analysis, and commentary on the trends, challenges, and leaders shaping Historically Black Colleges and Universities (HBCUs) and higher education broadly — going beyond H.E.L.F.'s own mission to cover the issues defining the field today.</p>
+          <a class="btn btn-gold" style="margin-top:1.2rem" href="https://heleaders.org/" target="_blank" rel="noopener" data-edit="about.parentLinkLabel" data-href="about.parentLinkUrl">Visit heleaders.org ↗</a>
         </div>
       </aside>
     </div>
@@ -403,7 +403,7 @@
 <section class="commentary">
   <div class="wrap">
     <div class="sec-head">
-      <h2>Commentary &amp; Voices</h2>
+      <h2 data-edit="sections.commentaryHeading">Commentary &amp; Voices</h2>
       <a href="#">All Commentary →</a>
     </div>
     <div class="comm-grid">
@@ -440,7 +440,7 @@
           <img class="brand-logo" style="width:50px;height:50px" src="assets/img/helf-logo.png" alt="H.E.L.F. crest">
           <span class="brand-name"><b style="color:#fff;font-size:1.3rem">The H.E.L.F <i style="color:var(--gold-bright)">Review</i></b><span style="color:#8e666e">Higher Education Leadership Foundation</span></span>
         </div>
-        <p>Published by the Higher Education Leadership Foundation, The H.E.L.F Review delivers news, analysis, and commentary on the trends, challenges, and leaders shaping HBCUs and higher education broadly.</p>
+        <p data-edit="footer.blurb">Published by the Higher Education Leadership Foundation, The H.E.L.F Review delivers news, analysis, and commentary on the trends, challenges, and leaders shaping HBCUs and higher education broadly.</p>
       </div>
       <div>
         <h4>Sections</h4>
@@ -472,7 +472,7 @@
       </div>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Higher Education Leadership Foundation. All rights reserved.</span>
+      <span data-edit="footer.copyright">© 2026 Higher Education Leadership Foundation. All rights reserved.</span>
       <span><a href="#">Privacy Policy</a> &nbsp;·&nbsp; <a href="#">Terms of Use</a></span>
     </div>
   </div>
@@ -482,6 +482,35 @@
 <script>
 (async()=>{try{
   function esc(s){return String(s??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]))}
+
+  // Site copy. The HTML in this file is the fallback — if this request fails the
+  // page still renders the wording it shipped with.
+  try{
+    const sr=await fetch('/api/site');
+    if(sr.ok){
+      const site=await sr.json();
+      const get=(o,p)=>p.split('.').reduce((a,k)=>a&&a[k],o);
+      document.querySelectorAll('[data-edit]').forEach(el=>{
+        const v=get(site,el.dataset.edit);
+        if(typeof v==='string'&&v.trim()) el.textContent=v;
+      });
+      document.querySelectorAll('[data-href]').forEach(el=>{
+        const v=get(site,el.dataset.href); if(v) el.setAttribute('href',v);
+      });
+      document.querySelectorAll('[data-src]').forEach(el=>{
+        const v=get(site,el.dataset.src); if(v) el.setAttribute('src',v);
+      });
+      document.querySelectorAll('[data-placeholder]').forEach(el=>{
+        const v=get(site,el.dataset.placeholder); if(v) el.setAttribute('placeholder',v);
+      });
+      document.querySelectorAll('[data-compose]').forEach(el=>{
+        const p=el.dataset.compose.split('|').map(k=>get(site,k));
+        if(p.every(x=>x==null)) return;
+        el.innerHTML=esc(p[0]||'')+' <i>'+esc(p[1]||'')+'</i>';
+      });
+    }
+  }catch(e){/* keep the static copy */}
+
   const r=await fetch('/api/articles');if(!r.ok)return;
   const arts=await r.json();if(!Array.isArray(arts)||!arts.length)return;
   const list=document.querySelector('.news-list');

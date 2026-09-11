@@ -72,6 +72,25 @@
   .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy-deep);color:#fff;padding:.8rem 1.5rem;border-radius:999px;font-size:.85rem;font-weight:600;transition:.3s;opacity:0}
   .toast.show{transform:translateX(-50%);opacity:1}
   @media(max-width:720px){form .grid{grid-template-columns:1fr}.t-hide{display:none}}
+  /* Site Content editor */
+  .site-sec{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:1.3rem;overflow:hidden}
+  .site-sec > h2{font-family:'Cormorant Garamond',serif;font-size:1.32rem;color:var(--navy);padding:1.05rem 1.5rem;border-bottom:1px solid var(--hairline);background:#fcfaf6;margin:0}
+  .site-sec > h2 small{display:block;font-family:'Inter',sans-serif;font-size:.72rem;font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0;margin-top:.15rem}
+  .site-body{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;padding:1.5rem}
+  .site-body .full{grid-column:1/-1}
+  .sub-h{grid-column:1/-1;font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-deep);border-top:1px solid var(--hairline);padding-top:1.1rem;margin-top:.2rem;display:flex;align-items:center;gap:.6rem}
+  .lrow{grid-column:1/-1;display:flex;gap:.6rem;align-items:flex-start;background:var(--paper);border:1px solid var(--hairline);border-radius:10px;padding:.75rem}
+  .lrow .lfields{flex:1;display:grid;gap:.55rem}
+  .lrow .lnum{font-size:.7rem;font-weight:800;color:var(--muted);min-width:1.5rem;padding-top:.55rem}
+  .lrow .lacts{display:flex;flex-direction:column;gap:.25rem}
+  .mini{border:1px solid var(--hairline);background:#fff;border-radius:7px;width:26px;height:24px;cursor:pointer;font-size:.72rem;line-height:1;color:var(--navy)}
+  .mini:hover{border-color:var(--gold);background:#fffdf7}
+  .mini.del:hover{border-color:#c66;color:#a33}
+  .add-row{grid-column:1/-1;justify-self:start;border:1.5px dashed var(--hairline);background:#fff;border-radius:9px;padding:.5rem 1rem;font:inherit;font-size:.8rem;font-weight:700;color:var(--navy);cursor:pointer}
+  .add-row:hover{border-color:var(--gold);color:var(--gold-deep)}
+  .site-foot{position:sticky;bottom:0;display:flex;align-items:center;justify-content:flex-end;gap:1rem;padding:1rem 1.5rem;background:rgba(252,250,246,.96);backdrop-filter:blur(8px);border:1px solid var(--hairline);border-radius:var(--r);box-shadow:var(--shadow)}
+  .dirty-note{font-size:.8rem;color:var(--gold-deep);font-weight:700}
+  @media(max-width:720px){.site-body{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -106,13 +125,24 @@
     <div class="tabs">
       <button class="on" id="tab-speakers" onclick="switchTab('speakers')">Speaker's Bureau</button>
       <button id="tab-testimonials" onclick="switchTab('testimonials')">Testimonials</button>
+      <button id="tab-site" onclick="switchTab('site')">Site Content</button>
     </div>
-    <div class="note">Demo editor — changes save to <code>data/content.json</code> locally (or Vercel Blob when deployed) and appear on the site immediately.</div>
-    <div class="card">
+    <div class="note" id="list-note">Changes save to <code>data/content.json</code> locally (or Vercel Blob when deployed) and appear on the site immediately.</div>
+    <div class="card" id="table-card">
       <table>
         <thead id="thead"></thead>
         <tbody id="rows"></tbody>
       </table>
+    </div>
+
+    <!-- Site Content: page copy. Layout, colours and fonts are fixed by design
+         and deliberately not editable here. -->
+    <div id="site-view" style="display:none">
+      <div id="site-sections"></div>
+      <div class="site-foot">
+        <span id="site-dirty" class="dirty-note"></span>
+        <button class="btn btn-gold" onclick="saveSite()">Save &amp; Publish</button>
+      </div>
     </div>
   </div>
 
@@ -148,10 +178,11 @@ function login(){
   fetch('/api/content',{method:'PUT',headers:{'Content-Type':'application/json','x-admin-code':v},body:'null'})
     .then(async r=>{
       if(r.status===401){document.getElementById('gate-err').textContent='Incorrect code — try again.';return}
+      // Any non-401 means the code was accepted. The probe body is deliberately
+      // invalid so the API rejects it with 400 without writing anything.
       sessionStorage.setItem(CODE_KEY,v);
-      // that probe wiped nothing (body null -> empty doc), so re-save current data if any existed
       document.getElementById('gate').style.display='none';
-      await loadDoc(true);
+      await loadDoc();
     });
 }
 function logout(){sessionStorage.removeItem(CODE_KEY);location.reload()}
@@ -173,11 +204,152 @@ async function persist(){
 
 function switchTab(t){
   tab=t;editingIndex=-1;
-  document.getElementById('tab-speakers').classList.toggle('on',t==='speakers');
-  document.getElementById('tab-testimonials').classList.toggle('on',t==='testimonials');
-  document.getElementById('list-title').textContent=t==='speakers'?'Speakers':'Testimonials';
-  document.getElementById('btn-new').textContent=t==='speakers'?'＋ New Speaker':'＋ New Testimonial';
-  renderList();
+  ['speakers','testimonials','site'].forEach(k=>
+    document.getElementById('tab-'+k).classList.toggle('on',t===k));
+  const isSite=t==='site';
+  document.getElementById('site-view').style.display=isSite?'':'none';
+  document.getElementById('table-card').style.display=isSite?'none':'';
+  document.getElementById('btn-new').style.display=isSite?'none':'';
+  document.getElementById('list-note').innerHTML=isSite
+    ? 'Edit the wording on the public page. Layout, colours and fonts are fixed by the design and are not editable here.'
+    : 'Changes save to <code>data/content.json</code> locally (or Vercel Blob when deployed) and appear on the site immediately.';
+  document.getElementById('list-title').textContent=
+    isSite?'Site Content':(t==='speakers'?'Speakers':'Testimonials');
+  if(isSite){ if(!siteDoc) loadSite(); else renderSite(); }
+  else renderList();
+}
+
+/* ── Site Content ─────────────────────────────────────────────────────────
+   Schema drives the form, so adding a field here is the only change needed.
+   `fields` are single values; `lists` are repeatable rows with add/remove/reorder. */
+const SITE_SCHEMA=[
+  {key:'topbar',title:'Top Bar',hint:'The thin strip above the navigation',fields:[
+    {k:'note',label:'Left-hand note'},{k:'email',label:'Contact email'}]},
+  {key:'hero',title:'Hero',hint:'The first screen visitors see',fields:[
+    {k:'eyebrow',label:'Tagline above headline'},
+    {k:'headline',label:'Headline — first part'},
+    {k:'headlineEm',label:'Headline — highlighted words'},
+    {k:'lead',label:'Intro paragraph',type:'textarea',full:true},
+    {k:'cta1',label:'Button 1 label'},{k:'cta2',label:'Button 2 label'}],
+   lists:[{k:'stats',label:'Statistics',cols:[['value','Figure'],['label','Description']]}]},
+  {key:'about',title:'About Us',fields:[
+    {k:'eyebrow',label:'Section label'},{k:'heading',label:'Heading',full:true},
+    {k:'badgeValue',label:'Badge figure'},{k:'badgeLabel',label:'Badge caption'},
+    {k:'missionHeading',label:'Mission heading'},{k:'visionHeading',label:'Vision heading'},
+    {k:'mission',label:'Mission statement',type:'textarea',full:true},
+    {k:'vision',label:'Vision statement',type:'textarea',full:true}],
+   lists:[{k:'paragraphs',label:'Body paragraphs',plain:true,type:'textarea'}]},
+  {key:'services',title:'Consulting Services',hint:'Numbering is automatic',fields:[
+    {k:'eyebrow',label:'Section label'},{k:'heading',label:'Heading'},
+    {k:'intro',label:'Intro line',type:'textarea',full:true}],
+   lists:[{k:'items',label:'Services',cols:[['title','Title'],['description','Description','textarea']]}]},
+  {key:'speakersSection',title:"Speaker's Bureau heading",hint:'Speakers themselves live in the Speaker’s Bureau tab',fields:[
+    {k:'eyebrow',label:'Section label'},{k:'heading',label:'Heading'},
+    {k:'intro',label:'Intro line',type:'textarea',full:true},
+    {k:'ctaLabel',label:'Button label'}]},
+  {key:'band',title:'Call-to-action band',fields:[
+    {k:'heading',label:'Heading — first part'},
+    {k:'headingEm',label:'Heading — highlighted words'},
+    {k:'headingAfter',label:'Heading — remainder'},
+    {k:'ctaLabel',label:'Button label'},
+    {k:'text',label:'Supporting line',type:'textarea',full:true}]},
+  {key:'book',title:'Featured Book',fields:[
+    {k:'eyebrow',label:'Section label'},{k:'title',label:'Book title'},
+    {k:'meta',label:'Publisher / foreword line',full:true},
+    {k:'description',label:'Description',type:'textarea',full:true}],
+   lists:[{k:'quotes',label:'Endorsements',cols:[['quote','Quote','textarea'],['name','Name'],['affiliation','Affiliation','textarea']]}]},
+  {key:'testimonialsSection',title:'Testimonials heading',hint:'The quotes themselves live in the Testimonials tab',fields:[
+    {k:'eyebrow',label:'Section label'},{k:'heading',label:'Heading'},
+    {k:'intro',label:'Intro line',type:'textarea',full:true}]},
+  {key:'contact',title:'Contact',fields:[
+    {k:'eyebrow',label:'Section label'},{k:'heading',label:'Heading'},
+    {k:'intro',label:'Intro line',type:'textarea',full:true}],
+   lists:[
+    {k:'items',label:'Contact details',cols:[['label','Label'],['value','Value'],['type','Type: email, phone or location']]},
+    {k:'socials',label:'Social links',cols:[['name','Network'],['label','Icon text'],['url','URL']]}]},
+  {key:'footer',title:'Footer',fields:[
+    {k:'blurb',label:'Footer blurb',type:'textarea',full:true},
+    {k:'copyright',label:'Copyright line',full:true}]}
+];
+
+let siteDoc=null, siteDirty=false;
+
+async function loadSite(){
+  try{ siteDoc=await (await fetch('/api/site')).json(); }
+  catch(e){ siteDoc={}; toast('Could not load site content'); }
+  siteDirty=false; renderSite();
+}
+
+function markDirty(){ siteDirty=true; document.getElementById('site-dirty').textContent='Unsaved changes'; }
+
+function fieldBox(secKey,f,val){
+  const id='s_'+secKey+'_'+f.k;
+  const input=f.type==='textarea'
+    ? `<textarea id="${id}" oninput="onSiteInput('${secKey}','${f.k}',this.value)">${esc(val??'')}</textarea>`
+    : `<input type="text" id="${id}" value="${esc(val??'')}" oninput="onSiteInput('${secKey}','${f.k}',this.value)">`;
+  return `<div class="${f.full?'full':''}"><label for="${id}">${esc(f.label)}</label>${input}</div>`;
+}
+function onSiteInput(sec,k,v){ (siteDoc[sec]=siteDoc[sec]||{})[k]=v; markDirty(); }
+
+function listRow(secKey,listKey,cols,plain,type,item,i,total){
+  const fields = plain
+    ? (type==='textarea'
+        ? `<textarea oninput="onListInput('${secKey}','${listKey}',${i},null,this.value)">${esc(item??'')}</textarea>`
+        : `<input type="text" value="${esc(item??'')}" oninput="onListInput('${secKey}','${listKey}',${i},null,this.value)">`)
+    : cols.map(([ck,clabel,ctype])=>ctype==='textarea'
+        ? `<div><label>${esc(clabel)}</label><textarea style="min-height:70px" oninput="onListInput('${secKey}','${listKey}',${i},'${ck}',this.value)">${esc((item&&item[ck])??'')}</textarea></div>`
+        : `<div><label>${esc(clabel)}</label><input type="text" value="${esc((item&&item[ck])??'')}" oninput="onListInput('${secKey}','${listKey}',${i},'${ck}',this.value)"></div>`
+      ).join('');
+  return `<div class="lrow"><div class="lnum">${String(i+1).padStart(2,'0')}</div>
+    <div class="lfields">${fields}</div>
+    <div class="lacts">
+      <button class="mini" title="Move up" ${i===0?'disabled':''} onclick="moveRow('${secKey}','${listKey}',${i},-1)">↑</button>
+      <button class="mini" title="Move down" ${i===total-1?'disabled':''} onclick="moveRow('${secKey}','${listKey}',${i},1)">↓</button>
+      <button class="mini del" title="Remove" onclick="removeRow('${secKey}','${listKey}',${i})">✕</button>
+    </div></div>`;
+}
+function onListInput(sec,list,i,col,v){
+  const arr=siteDoc[sec][list];
+  if(col===null) arr[i]=v; else arr[i][col]=v;
+  markDirty();
+}
+function moveRow(sec,list,i,d){
+  const a=siteDoc[sec][list], j=i+d;
+  if(j<0||j>=a.length) return;
+  [a[i],a[j]]=[a[j],a[i]]; markDirty(); renderSite();
+}
+function removeRow(sec,list,i){
+  if(!confirm('Remove this item?')) return;
+  siteDoc[sec][list].splice(i,1); markDirty(); renderSite();
+}
+function addRow(sec,list){
+  const spec=SITE_SCHEMA.find(s=>s.key===sec).lists.find(l=>l.k===list);
+  const blank=spec.plain?'':Object.fromEntries(spec.cols.map(([k])=>[k,'']));
+  (siteDoc[sec][list]=siteDoc[sec][list]||[]).push(blank);
+  markDirty(); renderSite();
+}
+
+function renderSite(){
+  const root=document.getElementById('site-sections');
+  root.innerHTML=SITE_SCHEMA.map(sec=>{
+    const d=siteDoc[sec.key]||{};
+    let body=(sec.fields||[]).map(f=>fieldBox(sec.key,f,d[f.k])).join('');
+    (sec.lists||[]).forEach(l=>{
+      const arr=Array.isArray(d[l.k])?d[l.k]:[];
+      body+=`<div class="sub-h">${esc(l.label)} <span style="color:var(--muted);font-weight:600">(${arr.length})</span></div>`;
+      body+=arr.map((it,i)=>listRow(sec.key,l.k,l.cols,l.plain,l.type,it,i,arr.length)).join('');
+      body+=`<button class="add-row" onclick="addRow('${sec.key}','${l.k}')">＋ Add ${esc(l.label.replace(/s$/,''))}</button>`;
+    });
+    return `<div class="site-sec"><h2>${esc(sec.title)}${sec.hint?`<small>${esc(sec.hint)}</small>`:''}</h2>
+      <div class="site-body">${body}</div></div>`;
+  }).join('');
+  document.getElementById('site-dirty').textContent=siteDirty?'Unsaved changes':'';
+}
+
+async function saveSite(){
+  const r=await fetch('/api/site',{method:'PUT',headers:hdrs(),body:JSON.stringify(siteDoc)});
+  if(r.ok){ siteDirty=false; document.getElementById('site-dirty').textContent=''; toast('Site content published'); }
+  else toast('Save failed — try signing in again');
 }
 
 function renderList(){

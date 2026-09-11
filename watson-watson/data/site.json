@@ -1,0 +1,180 @@
+{
+  "topbar": {
+    "note": "Serving institutions, organizations, and leaders nationwide",
+    "email": "info@watsonwatsonassociates.com"
+  },
+  "hero": {
+    "eyebrow": "Consulting · Leadership · Speaker's Bureau",
+    "headline": "Guiding institutions and leaders toward",
+    "headlineEm": "enduring excellence",
+    "lead": "Watson & Watson Associates is a strategic communications and consulting practice built at the intersection of higher education, journalism, and leadership development. We help colleges, universities, nonprofits, and mission-driven organizations tell their story with clarity, navigate change with confidence, and equip the leaders at the front of the room — whether that room is a boardroom, a commencement stage, or a national conference hall.",
+    "cta1": "Book a Consultation",
+    "cta2": "Meet Our Speakers",
+    "stats": [
+      {
+        "value": "25+",
+        "label": "Years of combined leadership experience in higher education and strategy"
+      },
+      {
+        "value": "100+",
+        "label": "Keynotes, workshops, and engagements delivered nationwide"
+      },
+      {
+        "value": "1:1",
+        "label": "Tailored consulting engagements built around your goals"
+      }
+    ]
+  },
+  "about": {
+    "eyebrow": "About Us",
+    "heading": "A trusted partner in leadership & transformation",
+    "paragraphs": [
+      "Watson & Watson Associates, LLC is a strategic communications and consulting firm founded by Dr. Jamal Watson — a scholar, author, award-winning journalist and higher education strategist — with more than two decades of experience covering, advising, and speaking on the issues shaping American institutions today.",
+      "We work directly with college and university presidents, provosts, boards, nonprofit executives, and communications teams to sharpen institutional voice, strengthen strategy, and build the kind of leadership that endures beyond a single news cycle or budget year. Our approach blends the rigor of a journalist's eye and the insight of a scholar of history and public policy.",
+      "Whether we're guiding an institution through a strategic communications plan, coaching an executive through a defining moment, or placing a speaker who can move a room, our work is grounded in one belief: institutions rise or fall on the strength — and the clarity — of their leadership."
+    ],
+    "badgeValue": "25+",
+    "badgeLabel": "Years of Experience",
+    "missionHeading": "Our Mission",
+    "mission": "To equip leaders and institutions with the strategy, storytelling, and voice they need to serve their communities with excellence, integrity, and lasting impact — spanning higher education, culture, and entertainment.",
+    "visionHeading": "Our Vision",
+    "vision": "To create a nation of institutions led with clarity and courage, where colleges, universities, and mission-driven organizations are equipped to communicate their purpose, navigate change, and produce the next generation of transformative leaders."
+  },
+  "services": {
+    "eyebrow": "What We Do",
+    "heading": "Consulting Services",
+    "intro": "Strategic communications and leadership consulting for institutions and the people who run them.",
+    "items": [
+      {
+        "title": "Strategic Communications Planning",
+        "description": "Comprehensive, full-year communications strategy — from message architecture and media positioning to crisis-readiness — built around an institution's mission and moment."
+      },
+      {
+        "title": "Executive Leadership Coaching",
+        "description": "One-on-one coaching for college presidents, executives, and emerging leaders navigating high-stakes decisions, public visibility, and complex institutional politics."
+      },
+      {
+        "title": "Higher Education Consulting",
+        "description": "Guidance for colleges and universities on enrollment strategy, institutional positioning, governance, and student success, informed by direct experience covering the sector."
+      },
+      {
+        "title": "Thought Leadership & Op-Ed Development",
+        "description": "Ghostwriting and message development that turns a leader's expertise into published op-eds, bylines, and commentary that shape the public conversation on their issue."
+      },
+      {
+        "title": "Editorial & Manuscript Development",
+        "description": "Developmental and structural editing for books, speeches, and long-form manuscripts — from concept and organization to line-level polish — drawing on hands-on experience shepherding manuscripts from draft to publication."
+      },
+      {
+        "title": "Crisis & Reputation Management",
+        "description": "Rapid-response communications counsel and messaging strategy for institutions navigating public scrutiny, controversy, or reputational risk."
+      },
+      {
+        "title": "Board & Governance Communications Training",
+        "description": "Workshops and retreats that help boards and executive teams communicate with one voice and govern with clarity and confidence."
+      },
+      {
+        "title": "Media Relations & Positioning",
+        "description": "Media training, press strategy, and placement support drawing on more than two decades of newsroom and editorial experience, including for institutions navigating first-time national press attention."
+      },
+      {
+        "title": "Keynotes & Workshops",
+        "description": "Substantive, research-grounded presentations for conferences, convocations, faculty retreats, and professional development on leadership, higher education equity, student debt, and Black political and religious history."
+      }
+    ]
+  },
+  "speakersSection": {
+    "eyebrow": "Speaker's Bureau",
+    "heading": "Voices that move audiences",
+    "intro": "Our bureau connects organizations with accomplished speakers on leadership, education equity, culture and transformation, grounded in scholarship, journalism, and lived experience.",
+    "ctaLabel": "Request a Speaker"
+  },
+  "band": {
+    "heading": "Bring a",
+    "headingEm": "transformative voice",
+    "headingAfter": "to your next event",
+    "text": "From convocations to executive retreats, our speakers deliver messages that resonate long after the applause.",
+    "ctaLabel": "Check Speaker Availability"
+  },
+  "book": {
+    "eyebrow": "Featured Book",
+    "title": "The Student Debt Crisis: America's Moral Urgency",
+    "meta": "Broadleaf Books, 2025 · Foreword by Rev. Al Sharpton",
+    "description": "The Student Debt Crisis: America's Moral Urgency makes the case that America's $1.7 trillion student debt crisis is one of the defining civil rights issues of our time. Drawing on extensive interviews with students, administrators, and policymakers, Watson traces the history and current reality of student debt in America and its disproportionate toll on Black and brown borrowers, particularly Black women — while making an urgent moral argument for reform.",
+    "quotes": [
+      {
+        "quote": "Jamal Watson has written a superb and courageous book on a crucial yet overlooked issue: student debt. His visionary scholarship continues to matter!",
+        "name": "Dr. Cornel West",
+        "affiliation": "Author of Race Matters; Dietrich Bonhoeffer Professor of Philosophy & Christian Practice, Union Theological Seminary"
+      },
+      {
+        "quote": "Student debt is a crisis that unites large swaths of the American public across axes of race, class, and gender. Jamal Watson's brilliant book The Student Debt Crisis is both timely and necessary. One of America's leading public intellectuals delivers an analytical history of this pressing issue while offering an impassioned plea for relief of debt that crushes the future of millions of citizens.",
+        "name": "Dr. Michael Eric Dyson",
+        "affiliation": "University Distinguished Professor of African American and Diaspora Studies, Vanderbilt University"
+      },
+      {
+        "quote": "If you're looking for a compelling and comprehensive book on student loan debt, then look no further. Watson has written a groundbreaking book, sharing policy, data, and real stories, that persuasively calls for action, especially around racial justice. A must-read from beginning to end.",
+        "name": "Dr. Donna Y. Ford",
+        "affiliation": "Distinguished Professor of Education and Human Ecology, The Ohio State University"
+      },
+      {
+        "quote": "Jamal Watson's The Student Debt Crisis is both a brilliant call to arms regarding one of the pressing civil rights issues of the era and an insightful and urgent moral plea to reimagine the possibility and promise of American democracy. An excellent and invigorating read.",
+        "name": "Dr. Peniel E. Joseph",
+        "affiliation": "Author of The Sword and the Shield; founding director, Center for the Study of Race and Democracy, University of Texas at Austin"
+      },
+      {
+        "quote": "Few citizens know more about American higher education than Jamal Watson. This book is perhaps the greatest demonstration of his undisputed expertise. The magnitude of this significant, consciousness-raising contribution to the literature on our nation's student debt crisis cannot be overstated.",
+        "name": "Dr. Shaun Harper",
+        "affiliation": "Author of Let's Talk About DEI; Clifford and Betty Allen Chair in Urban Leadership, University of Southern California"
+      }
+    ]
+  },
+  "testimonialsSection": {
+    "eyebrow": "Results & Recognition",
+    "heading": "What clients say",
+    "intro": "Sample testimonials shown for layout — real quotes, client logos, and affiliations will replace these."
+  },
+  "contact": {
+    "eyebrow": "Get In Touch",
+    "heading": "Let's start a conversation",
+    "intro": "Whether you need a strategic partner or a speaker for your next event, we'd love to hear from you.",
+    "items": [
+      {
+        "label": "General Inquiries",
+        "value": "info@watsonwatsonassociates.com",
+        "type": "email"
+      },
+      {
+        "label": "Dr. Jamal Watson",
+        "value": "jamal@watsonwatsonassociates.com",
+        "type": "email"
+      }
+    ],
+    "socials": [
+      {
+        "label": "in",
+        "name": "LinkedIn",
+        "url": ""
+      },
+      {
+        "label": "f",
+        "name": "Facebook",
+        "url": ""
+      },
+      {
+        "label": "𝕏",
+        "name": "X",
+        "url": ""
+      },
+      {
+        "label": "ig",
+        "name": "Instagram",
+        "url": ""
+      }
+    ]
+  },
+  "footer": {
+    "blurb": "Consulting and speaking services that strengthen leaders, institutions, and communities.",
+    "copyright": "© 2026 Watson & Watson Associates, LLC. All rights reserved."
+  }
+}

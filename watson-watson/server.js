@@ -2,7 +2,10 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const handler = require('./api/content.js');
+const ROUTES = {
+  '/api/content': require('./api/content.js'),
+  '/api/site': require('./api/site.js')
+};
 
 const ROOT = __dirname;
 const PORT = 8743;
@@ -15,7 +18,9 @@ const MIME = {
 http.createServer((req, res) => {
   const url = new URL(req.url, 'http://localhost');
 
-  if (url.pathname === '/api/content') {
+  const handler = ROUTES[url.pathname];
+  if (handler) {
+    // shim Vercel's (req, res) interface
     req.query = Object.fromEntries(url.searchParams);
     res.status = c => { res.statusCode = c; return res; };
     res.json = o => { res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(o)); };

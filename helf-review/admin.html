@@ -81,6 +81,18 @@
   .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--crimson-ink);color:#fff;padding:.8rem 1.5rem;border-radius:999px;font-size:.85rem;font-weight:600;transition:.3s;opacity:0}
   .toast.show{transform:translateX(-50%);opacity:1}
   @media(max-width:720px){form .grid{grid-template-columns:1fr}.t-hide{display:none}}
+  /* Tabs + Site Content editor */
+  .tabs{display:flex;gap:.4rem;margin-bottom:1.1rem;flex-wrap:wrap}
+  .tabs button{border:1.5px solid var(--hairline);background:#fff;border-radius:999px;padding:.5rem 1.15rem;font:inherit;font-size:.84rem;font-weight:700;color:var(--muted);cursor:pointer}
+  .tabs button.on{background:var(--crimson);border-color:var(--crimson);color:#fff}
+  .site-sec{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:1.3rem;overflow:hidden}
+  .site-sec > h2{font-family:'DM Serif Display',Georgia,serif;font-size:1.3rem;color:var(--crimson-ink);padding:1.05rem 1.5rem;border-bottom:1px solid var(--hairline);background:#fdfcf9;margin:0;font-weight:400}
+  .site-sec > h2 small{display:block;font-family:'Inter',sans-serif;font-size:.72rem;color:var(--muted);margin-top:.15rem}
+  .site-body{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;padding:1.5rem}
+  .site-body .full{grid-column:1/-1}
+  .site-foot{position:sticky;bottom:0;display:flex;align-items:center;justify-content:flex-end;gap:1rem;padding:1rem 1.5rem;background:rgba(253,252,249,.96);backdrop-filter:blur(8px);border:1px solid var(--hairline);border-radius:var(--r);box-shadow:var(--shadow)}
+  .dirty-note{font-size:.8rem;color:var(--crimson);font-weight:700}
+  @media(max-width:720px){.site-body{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -110,15 +122,29 @@
 
   <div class="list-view" id="list-view">
     <div class="head">
-      <h1>Articles</h1>
-      <button class="btn btn-crimson" onclick="openEditor()">＋ New Article</button>
+      <h1 id="list-title">Articles</h1>
+      <button class="btn btn-crimson" id="btn-new" onclick="openEditor()">＋ New Article</button>
     </div>
-    <div class="note">Demo editor — changes save to this computer's <code>data/articles.json</code> and appear on the site immediately. In production this workflow moves to the CMS (e.g. Ghost) with real logins per user.</div>
-    <div class="card">
+    <div class="tabs">
+      <button class="on" id="tab-articles" onclick="switchTab('articles')">Articles</button>
+      <button id="tab-site" onclick="switchTab('site')">Site Content</button>
+    </div>
+    <div class="note" id="list-note">Changes save to <code>data/articles.json</code> locally (or Vercel Blob when deployed) and appear on the site immediately.</div>
+    <div class="card" id="table-card">
       <table>
         <thead><tr><th></th><th>Title</th><th class="t-hide">Category</th><th class="t-hide">Author</th><th>Status</th><th style="text-align:right">Actions</th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
+    </div>
+
+    <!-- Site Content: page copy. Layout, colours and fonts are fixed by design
+         and deliberately not editable here. -->
+    <div id="site-view" style="display:none">
+      <div id="site-sections"></div>
+      <div class="site-foot">
+        <span id="site-dirty" class="dirty-note"></span>
+        <button class="btn btn-crimson" onclick="saveSite()">Save &amp; Publish</button>
+      </div>
     </div>
   </div>
 
@@ -190,6 +216,80 @@ if(sessionStorage.getItem(CODE_KEY)){document.getElementById('gate').style.displ
 document.getElementById('code').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 
 function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ── Site Content ─────────────────────────────────────────────────────────
+   Schema drives the form. Wording only — layout and styling stay fixed. */
+const SITE_SCHEMA=[
+  {key:'brand',title:'Masthead',hint:'The header at the top of every page',fields:[
+    {k:'name',label:'Publication name — first part'},
+    {k:'nameEm',label:'Publication name — italic part'},
+    {k:'tagline',label:'Tagline under the name',full:true},
+    {k:'subscribeLabel',label:'Subscribe button label'},
+    {k:'searchPlaceholder',label:'Search box placeholder'}]},
+  {key:'about',title:'About The Review',hint:'Sidebar panel',fields:[
+    {k:'heading',label:'Heading',full:true},
+    {k:'text',label:'Description',type:'textarea',full:true},
+    {k:'parentLinkLabel',label:'Parent-site button label'},
+    {k:'parentLinkUrl',label:'Parent-site URL'}]},
+  {key:'editor',title:'From the Editor',hint:'Sidebar profile',fields:[
+    {k:'widgetHeading',label:'Panel heading'},
+    {k:'name',label:'Editor name'},
+    {k:'role',label:'Role'},
+    {k:'image',label:'Headshot path'},
+    {k:'bio',label:'Short bio',type:'textarea',full:true},
+    {k:'fullBioLabel',label:'Full-bio link label'},
+    {k:'fullBioUrl',label:'Full-bio link URL'}]},
+  {key:'sections',title:'Section Headings',fields:[
+    {k:'latestHeading',label:'Latest news heading'},
+    {k:'commentaryHeading',label:'Commentary heading'}]},
+  {key:'footer',title:'Footer',fields:[
+    {k:'blurb',label:'Footer blurb',type:'textarea',full:true},
+    {k:'copyright',label:'Copyright line',full:true}]}
+];
+
+let siteDoc=null, siteDirty=false, tab='articles';
+
+function switchTab(t){
+  tab=t;
+  ['articles','site'].forEach(k=>document.getElementById('tab-'+k).classList.toggle('on',t===k));
+  const isSite=t==='site';
+  document.getElementById('site-view').style.display=isSite?'':'none';
+  document.getElementById('table-card').style.display=isSite?'none':'';
+  document.getElementById('btn-new').style.display=isSite?'none':'';
+  document.getElementById('list-title').textContent=isSite?'Site Content':'Articles';
+  document.getElementById('list-note').innerHTML=isSite
+    ? 'Edit the wording on the public page. Layout, colours and fonts are fixed by the design and are not editable here.'
+    : 'Changes save to <code>data/articles.json</code> locally (or Vercel Blob when deployed) and appear on the site immediately.';
+  if(isSite){ if(!siteDoc) loadSite(); }
+  else loadList();
+}
+async function loadSite(){
+  try{ siteDoc=await (await fetch('/api/site')).json(); }
+  catch(e){ siteDoc={}; toast('Could not load site content'); }
+  siteDirty=false; renderSite();
+}
+function markDirty(){ siteDirty=true; document.getElementById('site-dirty').textContent='Unsaved changes'; }
+function onSiteInput(sec,k,v){ (siteDoc[sec]=siteDoc[sec]||{})[k]=v; markDirty(); }
+function renderSite(){
+  document.getElementById('site-sections').innerHTML=SITE_SCHEMA.map(sec=>{
+    const d=siteDoc[sec.key]||{};
+    const body=sec.fields.map(f=>{
+      const id='s_'+sec.key+'_'+f.k;
+      const input=f.type==='textarea'
+        ? `<textarea id="${id}" oninput="onSiteInput('${sec.key}','${f.k}',this.value)">${esc(d[f.k]??'')}</textarea>`
+        : `<input type="text" id="${id}" value="${esc(d[f.k]??'')}" oninput="onSiteInput('${sec.key}','${f.k}',this.value)">`;
+      return `<div class="${f.full?'full':''}"><label for="${id}">${esc(f.label)}</label>${input}</div>`;
+    }).join('');
+    return `<div class="site-sec"><h2>${esc(sec.title)}${sec.hint?`<small>${esc(sec.hint)}</small>`:''}</h2>
+      <div class="site-body">${body}</div></div>`;
+  }).join('');
+  document.getElementById('site-dirty').textContent=siteDirty?'Unsaved changes':'';
+}
+async function saveSite(){
+  const r=await fetch('/api/site',{method:'PUT',headers:hdrs(),body:JSON.stringify(siteDoc)});
+  if(r.ok){ siteDirty=false; document.getElementById('site-dirty').textContent=''; toast('Site content published'); }
+  else toast('Save failed — try signing in again');
+}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
 
 async function loadList(){
