@@ -129,6 +129,11 @@
       }
     ]
   },
+  "newsletter": {
+    "eyebrow": "Stay Connected",
+    "heading": "Insights for leaders, delivered to your inbox",
+    "text": "Join our mailing list for leadership insights, speaking availability, and firm updates."
+  },
   "testimonialsSection": {
     "eyebrow": "Results & Recognition",
     "heading": "What clients say",

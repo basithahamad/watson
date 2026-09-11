@@ -9,8 +9,8 @@
     },
     {
       "name": "watson-cms",
-      "runtimeExecutable": "node",
-      "runtimeArgs": ["watson-watson/server.js"],
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "watson-watson"],
       "port": 8743
     }
   ]

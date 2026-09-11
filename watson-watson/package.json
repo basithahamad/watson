@@ -1,12 +1,17 @@
 {
   "name": "watson-watson-associates",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "Watson & Watson Associates, LLC — consulting site with lightweight CMS (Vercel + Blob)",
+  "description": "Watson & Watson Associates, LLC — public site + CMS admin (Next.js on Vercel)",
   "scripts": {
-    "dev": "node server.js"
+    "dev": "next dev -p 8743",
+    "build": "next build",
+    "start": "next start -p 8743"
   },
   "dependencies": {
-    "@vercel/blob": "^0.27.0"
+    "@vercel/blob": "^0.27.0",
+    "next": "16.3.4",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   }
 }
