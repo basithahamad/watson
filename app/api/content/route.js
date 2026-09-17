@@ -18,11 +18,7 @@ export async function PUT(request) {
   if (!Array.isArray(body.speakers) && !Array.isArray(body.testimonials))
     return Response.json({ error: 'expected speakers and/or testimonials' }, { status: 400 });
 
-  const current = await read('content');
-  const doc = {
-    speakers: Array.isArray(body.speakers) ? body.speakers : current.speakers || [],
-    testimonials: Array.isArray(body.testimonials) ? body.testimonials : current.testimonials || []
-  };
-  await write('content', doc);
-  return Response.json(doc);
+  // Each array is synced as a set inside one transaction; whichever key is absent
+  // is left alone, so a partial save is safe.
+  return Response.json(await write('content', body));
 }

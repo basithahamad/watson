@@ -53,7 +53,9 @@
   .imgdrop{border:2px dashed var(--hairline);border-radius:12px;padding:1rem;text-align:center;font-size:.82rem;color:var(--muted);cursor:pointer;transition:.2s;background:#fff}
   .imgdrop:hover{border-color:var(--gold);color:var(--navy)}
   .imgdrop img{max-height:150px;border-radius:8px;margin:0 auto .5rem}
+  .up-err{color:#9c2c2c;font-size:.78rem;margin-top:.45rem}
   .form-foot{display:flex;justify-content:space-between;padding:1.2rem 1.8rem;border-top:1px solid var(--hairline);background:#fcfaf6}
+  .form-foot .btn:disabled{opacity:.55;cursor:progress}
   /* login */
   #gate{position:fixed;inset:0;background:var(--navy-deep);display:flex;align-items:center;justify-content:center;z-index:99}
   #gate .box{background:#fff;border-radius:16px;padding:2.4rem;width:min(380px,90vw);text-align:center}

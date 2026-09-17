@@ -76,6 +76,7 @@ export default function Admin() {
           <Editor
             kind={tab}
             entry={editing}
+            code={code}
             onCancel={() => setEditing(null)}
             onSave={item => {
               const next = { ...doc, [tab]: [...list] };
@@ -185,7 +186,7 @@ function ListTable({ kind, list, onEdit }) {
   );
 }
 
-function Editor({ kind, entry, onSave, onCancel, onDelete }) {
+function Editor({ kind, entry, code, onSave, onCancel, onDelete }) {
   const a = entry.item || {};
   const [f, setF] = useState({
     name: a.name || '', role: a.role || '', bio: a.bio || '',
@@ -194,20 +195,49 @@ function Editor({ kind, entry, onSave, onCancel, onDelete }) {
     image: a.image || ''
   });
   const fileRef = useRef(null);
+  const [busy, setBusy] = useState(false);
+  const [upErr, setUpErr] = useState('');
   const set = (k, v) => setF(p => ({ ...p, [k]: v }));
 
-  // Downscale before storing so the content document stays light.
+  // Downscale in the browser to keep the upload small, then POST the file to the
+  // server. What gets stored on the record is the returned URL — never the image
+  // bytes themselves.
   function pick(input) {
-    const file = input.files[0]; if (!file) return;
+    const file = input.files[0];
+    if (!file) return;
+    setUpErr('');
+    setBusy(true);
+
+    const fail = msg => { setUpErr(msg); setBusy(false); input.value = ''; };
+
     const rd = new FileReader();
+    rd.onerror = () => fail('Could not read that file.');
     rd.onload = () => {
       const img = new Image();
+      img.onerror = () => fail("That file isn't a readable image.");
       img.onload = () => {
         const max = 1600, sc = Math.min(1, max / Math.max(img.width, img.height));
         const cv = document.createElement('canvas');
-        cv.width = img.width * sc; cv.height = img.height * sc;
+        cv.width = Math.round(img.width * sc);
+        cv.height = Math.round(img.height * sc);
         cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
-        set('image', cv.toDataURL('image/jpeg', 0.85));
+
+        cv.toBlob(async blob => {
+          if (!blob) return fail('Could not process that image.');
+          try {
+            const body = new FormData();
+            // No Content-Type header — the browser sets it with the boundary.
+            body.append('file', blob, 'photo.jpg');
+            const r = await fetch('/api/upload', { method: 'POST', headers: { 'x-admin-code': code }, body });
+            const j = await r.json().catch(() => ({}));
+            if (!r.ok) throw new Error(j.error || 'Upload failed.');
+            set('image', j.url);
+            setBusy(false);
+            input.value = '';
+          } catch (err) {
+            fail(err.message);
+          }
+        }, 'image/jpeg', 0.85);
       };
       img.src = rd.result;
     };
@@ -248,17 +278,23 @@ function Editor({ kind, entry, onSave, onCancel, onDelete }) {
             )}
             <div className="full">
               <label>Photo</label>
-              <div className="imgdrop" onClick={() => fileRef.current?.click()}>
-                {f.image && <img src={f.image.startsWith('/') || f.image.startsWith('data:') ? f.image : `/${f.image}`} alt="" />}
-                <span>{f.image ? 'Click to replace photo' : 'Click to upload a photo (JPG/PNG)'}</span>
+              <div className="imgdrop" onClick={() => !busy && fileRef.current?.click()}>
+                {f.image && <img src={f.image.startsWith('/') ? f.image : `/${f.image}`} alt="" />}
+                <span>
+                  {busy ? 'Uploading…' : f.image ? 'Click to replace photo' : 'Click to upload a photo (JPG, PNG or WebP)'}
+                </span>
               </div>
-              <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={e => pick(e.target)} />
+              {upErr && <div className="up-err">{upErr}</div>}
+              <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp"
+                style={{ display: 'none' }} onChange={e => pick(e.target)} />
             </div>
           </div>
           <div className="form-foot">
             {entry.index >= 0 && <button type="button" className="btn btn-danger" onClick={() => confirm('Delete this item?') && onDelete()}>Delete</button>}
             <span style={{ flex: 1 }} />
-            <button type="submit" className="btn btn-gold">Save &amp; Publish</button>
+            <button type="submit" className="btn btn-gold" disabled={busy}>
+              {busy ? 'Uploading…' : 'Save & Publish'}
+            </button>
           </div>
         </form>
       </div>

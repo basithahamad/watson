@@ -1,4 +1,4 @@
-import { read, write, authorised, merge } from '../../../lib/store';
+import { read, write, authorised } from '../../../lib/store';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,7 +15,7 @@ export async function PUT(request) {
   if (!body || typeof body !== 'object' || Array.isArray(body))
     return Response.json({ error: 'expected an object' }, { status: 400 });
 
-  const doc = merge(await read('site'), body);
-  await write('site', doc);
-  return Response.json(doc);
+  // write() upserts only the sections present in the body, so a partial save
+  // leaves the rest untouched without a read-modify-write round trip.
+  return Response.json(await write('site', body));
 }

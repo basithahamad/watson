@@ -1,15 +1,17 @@
 {
   "name": "watson-watson-associates",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
-  "description": "Watson & Watson Associates, LLC — public site + CMS admin (Next.js on Vercel)",
+  "type": "module",
+  "description": "Watson & Watson Associates, LLC — public site + CMS admin (Next.js, MySQL)",
   "scripts": {
     "dev": "next dev -p 8743",
     "build": "next build",
-    "start": "next start -p 8743"
+    "start": "next start -p 8743",
+    "db:migrate": "node --env-file=.env scripts/migrate.mjs"
   },
   "dependencies": {
-    "@vercel/blob": "^0.27.0",
+    "mysql2": "^3.11.5",
     "next": "16.3.4",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"

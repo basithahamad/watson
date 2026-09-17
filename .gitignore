@@ -1,5 +1,9 @@
 node_modules/
 .next/
-.vercel
 .env
 .env.*
+!.env.example
+
+# Local upload dir (the default when UPLOAD_DIR is unset). In production this
+# lives outside the repo entirely.
+/uploads/
