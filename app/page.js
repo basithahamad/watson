@@ -216,8 +216,9 @@ export default async function Home() {
               </div>
             ))}
             <div className="socials">
-              {(contact.socials || []).map((s, i) => (
-                <a href={s.url || '#'} aria-label={s.name || s.label} key={i}>{s.label}</a>
+              {(contact.socials || []).filter(s => s.url).map((s, i) => (
+                <a href={s.url} aria-label={s.name || s.label} key={i}
+                  target="_blank" rel="noopener">{s.label}</a>
               ))}
             </div>
           </div>
@@ -253,8 +254,10 @@ export default async function Home() {
             <div>
               <h4>Connect</h4>
               <ul>
-                {(contact.socials || []).map((s, i) => (
-                  <li key={i}><a href={s.url || '#'}>{s.name || s.label}</a></li>
+                {(contact.socials || []).filter(s => s.url).map((s, i) => (
+                  <li key={i}>
+                    <a href={s.url} target="_blank" rel="noopener">{s.name || s.label}</a>
+                  </li>
                 ))}
               </ul>
             </div>
