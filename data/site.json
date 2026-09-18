@@ -129,11 +129,6 @@
       }
     ]
   },
-  "newsletter": {
-    "eyebrow": "Stay Connected",
-    "heading": "Insights for leaders, delivered to your inbox",
-    "text": "Join our mailing list for leadership insights, speaking availability, and firm updates."
-  },
   "testimonialsSection": {
     "eyebrow": "Results & Recognition",
     "heading": "What clients say",
@@ -181,5 +176,35 @@
   "footer": {
     "blurb": "Consulting and speaking services that strengthen leaders, institutions, and communities.",
     "copyright": "© 2026 Watson & Watson Associates, LLC. All rights reserved."
+  },
+  "nav": {
+    "ctaLabel": "Request a Speaker",
+    "ctaHref": "#contact",
+    "items": [
+      {
+        "label": "About",
+        "href": "#about"
+      },
+      {
+        "label": "Services",
+        "href": "#services"
+      },
+      {
+        "label": "Speaker's Bureau",
+        "href": "#speakers"
+      },
+      {
+        "label": "Book",
+        "href": "#book"
+      },
+      {
+        "label": "Testimonials",
+        "href": "#testimonials"
+      },
+      {
+        "label": "Contact",
+        "href": "#contact"
+      }
+    ]
   }
 }

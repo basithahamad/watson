@@ -2,6 +2,11 @@
 // data/site.json is all that's needed to expose new copy to the client.
 // `fields` are single values; `lists` are repeatable rows with add/remove/reorder.
 export const SITE_SCHEMA = [
+  { key: 'nav', title: 'Navigation', hint: 'The header menu and the mobile menu, in order', fields: [
+    { k: 'ctaLabel', label: 'Button label' },
+    { k: 'ctaHref', label: 'Button link — e.g. #contact' }],
+    lists: [{ k: 'items', label: 'Menu links', cols: [['label', 'Label'], ['href', 'Link — e.g. #services']] }] },
+
   { key: 'topbar', title: 'Top Bar', hint: 'The thin strip above the navigation', fields: [
     { k: 'note', label: 'Left-hand note' }, { k: 'email', label: 'Contact email' }] },
 

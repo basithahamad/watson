@@ -6,17 +6,6 @@ import { MobileNav } from './MobileNav';
 // rendered per request rather than cached at build time.
 export const dynamic = 'force-dynamic';
 
-// Section links, shared by the desktop nav and the mobile menu.
-const NAV_ITEMS = [
-  { href: '#about', label: 'About' },
-  { href: '#services', label: 'Services' },
-  { href: '#speakers', label: "Speaker's Bureau" },
-  { href: '#book', label: 'Book' },
-  { href: '#testimonials', label: 'Testimonials' },
-  { href: '#contact', label: 'Contact' }
-];
-const NAV_CTA = { href: '#contact', label: 'Request a Speaker' };
-
 export default async function Home() {
   const [site, content] = await Promise.all([read('site'), read('content')]);
 
@@ -32,6 +21,9 @@ export default async function Home() {
   const topbar = site.topbar || {};
 
   const speakers = content.speakers || [];
+  // The menu is content, not markup: it is edited in the admin like everything else.
+  const navItems = (site.nav?.items || []).filter(i => i.label && i.href);
+  const navCta = site.nav?.ctaLabel ? { label: site.nav.ctaLabel, href: site.nav.ctaHref || '#contact' } : null;
   const testimonials = content.testimonials || [];
 
   return (
@@ -50,15 +42,17 @@ export default async function Home() {
           </a>
           <nav>
             <ul>
-              {NAV_ITEMS.map(item => (
+              {navItems.map(item => (
                 <li key={item.href}><a href={item.href}>{item.label}</a></li>
               ))}
-              <li className="nav-cta">
-                <a className="btn btn-gold" href={NAV_CTA.href}>{NAV_CTA.label}</a>
-              </li>
+              {navCta && (
+                <li className="nav-cta">
+                  <a className="btn btn-gold" href={navCta.href}>{navCta.label}</a>
+                </li>
+              )}
             </ul>
           </nav>
-          <MobileNav items={NAV_ITEMS} cta={NAV_CTA} />
+          <MobileNav items={navItems} cta={navCta} />
         </div>
       </header>
 
@@ -185,6 +179,7 @@ export default async function Home() {
         </div>
       </section>
 
+      {testimonials.length > 0 && (
       <section className="testimonials" id="testimonials">
         <div className="wrap">
           <div className="section-head">
@@ -209,6 +204,7 @@ export default async function Home() {
           </div>
         </div>
       </section>
+      )}
 
       <section className="contact" id="contact">
         <div className="wrap">
@@ -249,10 +245,9 @@ export default async function Home() {
             <div>
               <h4>Explore</h4>
               <ul>
-                <li><a href="#about">About Us</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#speakers">Speaker&apos;s Bureau</a></li>
-                <li><a href="#testimonials">Testimonials</a></li>
+                {navItems.map(item => (
+                  <li key={item.href}><a href={item.href}>{item.label}</a></li>
+                ))}
               </ul>
             </div>
             <div>
