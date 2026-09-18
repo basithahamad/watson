@@ -44,10 +44,6 @@ export const SITE_SCHEMA = [
     { k: 'description', label: 'Description', type: 'textarea', full: true }],
     lists: [{ k: 'quotes', label: 'Endorsements', cols: [['quote', 'Quote', 'textarea'], ['name', 'Name'], ['affiliation', 'Affiliation', 'textarea']] }] },
 
-  { key: 'newsletter', title: 'Newsletter band', fields: [
-    { k: 'eyebrow', label: 'Section label' }, { k: 'heading', label: 'Heading', full: true },
-    { k: 'text', label: 'Supporting line', type: 'textarea', full: true }] },
-
   { key: 'testimonialsSection', title: 'Testimonials heading', hint: 'The quotes themselves live in the Testimonials tab', fields: [
     { k: 'eyebrow', label: 'Section label' }, { k: 'heading', label: 'Heading' },
     { k: 'intro', label: 'Intro line', type: 'textarea', full: true }] },

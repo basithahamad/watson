@@ -181,7 +181,7 @@
   .news-note{font-size:.75rem;color:var(--muted);grid-column:1/-1}
 
   /* ── Contact ───────────────────────────── */
-  .contact .wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:4.2rem}
+  .contact .wrap{display:grid;grid-template-columns:1fr;gap:2rem;max-width:760px}
   .contact h2{font-size:2.5rem;margin-bottom:1rem}
   .contact-intro{color:var(--muted);font-size:.96rem}
   .contact-item{display:flex;gap:1.05rem;margin:1.45rem 0;align-items:center}

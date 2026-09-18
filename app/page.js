@@ -1,6 +1,5 @@
 import { read } from '../lib/store';
 import { SERVICE_ICONS, CONTACT_ICONS } from './icons';
-import ContactForm, { NewsletterForm } from './ContactForm';
 
 // Content is edited through /admin and must appear immediately, so this page is
 // rendered per request rather than cached at build time.
@@ -199,19 +198,6 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="newsletter">
-        <div className="wrap">
-          <div className="news-inner">
-            <div>
-              <span className="eyebrow">{site.newsletter?.eyebrow || 'Stay Connected'}</span>
-              <h2>{site.newsletter?.heading || 'Insights for leaders, delivered to your inbox'}</h2>
-              <p dangerouslySetInnerHTML={{ __html: site.newsletter?.text || 'Join our mailing list for leadership insights, speaking availability, and firm updates.' }} />
-            </div>
-            <NewsletterForm />
-          </div>
-        </div>
-      </section>
-
       <section className="contact" id="contact">
         <div className="wrap">
           <div>
@@ -235,7 +221,6 @@ export default async function Home() {
               ))}
             </div>
           </div>
-          <ContactForm />
         </div>
       </section>
 
@@ -276,7 +261,6 @@ export default async function Home() {
           </div>
           <div className="foot-bottom">
             <span>{footer.copyright}</span>
-            <span><a href="#">Privacy Policy</a> &nbsp;·&nbsp; <a href="#">Terms of Use</a></span>
           </div>
         </div>
       </footer>
