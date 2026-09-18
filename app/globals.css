@@ -224,3 +224,15 @@
     .mission-cards{grid-template-columns:1fr}
     .about-badge{right:8px}
   }
+
+/* ── Accessibility ────────────────────────────────────────────────────────
+   Keyboard users had no visible focus indicator anywhere on the site. */
+a:focus-visible,button:focus-visible,input:focus-visible,
+textarea:focus-visible,[tabindex]:focus-visible{
+  outline:3px solid var(--gold);outline-offset:3px;border-radius:4px}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:.01ms !important;animation-duration:.01ms !important;scroll-behavior:auto !important}
+}
+
+h1,h2,h3{overflow-wrap:break-word}
