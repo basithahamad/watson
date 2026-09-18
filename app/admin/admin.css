@@ -39,7 +39,7 @@
   .thumb{width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:center top;background:#eee;display:block}
   .t-main{font-weight:600;max-width:380px}
   .t-main small{display:block;font-weight:500;color:var(--muted);font-size:.76rem}
-  .actions{display:flex;gap:.4rem;justify-content:flex-end}
+  .actions{display:flex;gap:.4rem;justify-content:flex-end;align-items:center}
   /* form */
   .editor{display:none}
   .editor.open{display:block}
@@ -94,10 +94,12 @@
   .lrow{grid-column:1/-1;display:flex;gap:.6rem;align-items:flex-start;background:var(--paper);border:1px solid var(--hairline);border-radius:10px;padding:.75rem}
   .lrow .lfields{flex:1;display:grid;gap:.55rem}
   .lrow .lnum{font-size:.7rem;font-weight:800;color:var(--muted);min-width:1.5rem;padding-top:.55rem}
-  .lrow .lacts{display:flex;flex-direction:column;gap:.25rem}
-  .mini{border:1px solid var(--hairline);background:#fff;border-radius:7px;width:26px;height:24px;cursor:pointer;font-size:.72rem;line-height:1;color:var(--navy)}
-  .mini:hover{border-color:var(--gold);background:#fffdf7}
-  .mini.del:hover{border-color:#c66;color:#a33}
+  .lrow .lacts{display:flex;flex-direction:column;gap:.3rem}
+  .mini{display:inline-flex;align-items:center;justify-content:center;flex:none;width:30px;height:30px;padding:0;border:1.5px solid var(--hairline);background:#fff;border-radius:9px;cursor:pointer;font:inherit;font-size:.82rem;line-height:1;color:var(--navy);transition:border-color .18s,background .18s,color .18s}
+  .mini:hover:not(:disabled){border-color:var(--gold);background:#fffdf7}
+  .mini:disabled{opacity:.3;cursor:not-allowed}
+  .mini.del{color:#9c2c2c}
+  .mini.del:hover:not(:disabled){border-color:#9c2c2c;background:#fdf4f4}
   .add-row{grid-column:1/-1;justify-self:start;border:1.5px dashed var(--hairline);background:#fff;border-radius:9px;padding:.5rem 1rem;font:inherit;font-size:.8rem;font-weight:700;color:var(--navy);cursor:pointer}
   .add-row:hover{border-color:var(--gold);color:var(--gold-deep)}
   .site-foot{position:sticky;bottom:0;display:flex;align-items:center;justify-content:flex-end;gap:1rem;padding:1rem 1.5rem;background:rgba(252,250,246,.96);backdrop-filter:blur(8px);border:1px solid var(--hairline);border-radius:var(--r);box-shadow:var(--shadow)}
