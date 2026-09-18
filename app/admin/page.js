@@ -33,7 +33,7 @@ export default function Admin() {
   const flash = m => { setToast(m); setTimeout(() => setToast(''), 2400); };
 
   useEffect(() => {
-    const saved = sessionStorage.getItem(CODE_KEY);
+    const saved = localStorage.getItem(CODE_KEY);
     if (saved) setCode(saved);
   }, []);
 
@@ -75,7 +75,7 @@ export default function Admin() {
           <span>
             <a href="/" target="_blank" rel="noopener">View site ↗</a>
             &nbsp;·&nbsp;
-            <a href="#" onClick={e => { e.preventDefault(); sessionStorage.removeItem(CODE_KEY); location.reload(); }}>Sign out</a>
+            <a href="#" onClick={e => { e.preventDefault(); localStorage.removeItem(CODE_KEY); location.reload(); }}>Sign out</a>
           </span>
         </div>
       </div>
@@ -145,7 +145,7 @@ function Gate({ onIn }) {
       body: 'null'
     });
     if (r.status === 401) { setErr('Incorrect code — try again.'); return; }
-    sessionStorage.setItem(CODE_KEY, v);
+    localStorage.setItem(CODE_KEY, v);
     onIn(v);
   }
   return (
@@ -154,9 +154,19 @@ function Gate({ onIn }) {
         <div style={{ fontSize: '2rem' }}>🔐</div>
         <h2>Watson &amp; Watson Associates</h2>
         <p>Content Editor — enter the access code to continue.</p>
-        <input type="text" value={v} autoComplete="off" placeholder="Access code"
-          onChange={e => setV(e.target.value)} onKeyDown={e => e.key === 'Enter' && submit()} />
-        <button className="btn btn-navy" style={{ width: '100%', justifyContent: 'center' }} onClick={submit}>Sign In</button>
+        {/* A real form with a password field is what makes a browser or password
+            manager offer to save and autofill the code. A text input outside a
+            form is ignored by all of them. */}
+        <form onSubmit={e => { e.preventDefault(); submit(); }}>
+          <input type="text" name="username" autoComplete="username"
+            value="Content Editor" readOnly aria-hidden="true" tabIndex={-1}
+            style={{ display: 'none' }} />
+          <input type="password" name="password" autoComplete="current-password"
+            value={v} placeholder="Access code" aria-label="Access code"
+            onChange={e => setV(e.target.value)} />
+          <button type="submit" className="btn btn-navy"
+            style={{ width: '100%', justifyContent: 'center', marginTop: '.7rem' }}>Sign In</button>
+        </form>
         <div className="err">{err}</div>
       </div>
     </div>
