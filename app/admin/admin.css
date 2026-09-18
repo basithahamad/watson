@@ -139,3 +139,4 @@
     form .grid{padding:1.3rem}
     .form-foot{padding:1.1rem 1.3rem}
   }
+  .form-err{grid-column:1/-1;margin:1.3rem 2rem -.6rem;background:#fdf4f4;border:1px solid #e3c4c4;color:#9c2c2c;border-radius:9px;padding:.6rem .9rem;font-size:.82rem;font-weight:600}

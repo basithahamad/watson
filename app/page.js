@@ -24,7 +24,9 @@ export default async function Home() {
   // The menu is content, not markup: it is edited in the admin like everything else.
   const navItems = (site.nav?.items || []).filter(i => i.label && i.href);
   const navCta = site.nav?.ctaLabel ? { label: site.nav.ctaLabel, href: site.nav.ctaHref || '#contact' } : null;
-  const testimonials = content.testimonials || [];
+  // An entry with no quote has nothing to show; skip it rather than render
+  // an empty card.
+  const testimonials = (content.testimonials || []).filter(t => (t.quote || '').trim());
 
   return (
     <>

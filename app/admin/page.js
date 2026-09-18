@@ -216,6 +216,7 @@ function Editor({ kind, entry, code, onSave, onCancel, onDelete }) {
   const fileRef = useRef(null);
   const [busy, setBusy] = useState(false);
   const [upErr, setUpErr] = useState('');
+  const [formErr, setFormErr] = useState('');
   const set = (k, v) => setF(p => ({ ...p, [k]: v }));
 
   // Downscale in the browser to keep the upload small, then POST the file to the
@@ -263,8 +264,17 @@ function Editor({ kind, entry, code, onSave, onCancel, onDelete }) {
     rd.readAsDataURL(file);
   }
 
+  // A contentEditable cannot carry `required`, so an empty quote used to save a
+  // blank testimonial that rendered as an empty card on the public site.
+  const isBlank = html => !html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+
   function submit(e) {
     e.preventDefault();
+    if (kind === 'testimonials' && isBlank(f.quote)) {
+      setFormErr('Add a quote before saving.');
+      return;
+    }
+    setFormErr('');
     const item = kind === 'speakers'
       ? { id: a.id || slug(f.name), name: f.name.trim(), role: f.role.trim(), bio: f.bio.trim(),
           topics: f.topics.split(',').map(t => t.trim()).filter(Boolean), image: f.image }
@@ -279,7 +289,8 @@ function Editor({ kind, entry, code, onSave, onCancel, onDelete }) {
         <button className="btn btn-ghost" onClick={onCancel}>← Back</button>
       </div>
       <div className="card">
-        <form onSubmit={submit}>
+        <form onSubmit={submit} noValidate={false}>
+          {formErr && <div className="form-err">{formErr}</div>}
           <div className="grid">
             {kind === 'speakers' ? (
               <>
