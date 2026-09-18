@@ -1,9 +1,21 @@
 import { read } from '../lib/store';
 import { SERVICE_ICONS, CONTACT_ICONS } from './icons';
+import { MobileNav } from './MobileNav';
 
 // Content is edited through /admin and must appear immediately, so this page is
 // rendered per request rather than cached at build time.
 export const dynamic = 'force-dynamic';
+
+// Section links, shared by the desktop nav and the mobile menu.
+const NAV_ITEMS = [
+  { href: '#about', label: 'About' },
+  { href: '#services', label: 'Services' },
+  { href: '#speakers', label: "Speaker's Bureau" },
+  { href: '#book', label: 'Book' },
+  { href: '#testimonials', label: 'Testimonials' },
+  { href: '#contact', label: 'Contact' }
+];
+const NAV_CTA = { href: '#contact', label: 'Request a Speaker' };
 
 export default async function Home() {
   const [site, content] = await Promise.all([read('site'), read('content')]);
@@ -38,15 +50,15 @@ export default async function Home() {
           </a>
           <nav>
             <ul>
-              <li><a href="#about">About</a></li>
-              <li><a href="#services">Services</a></li>
-              <li><a href="#speakers">Speaker&apos;s Bureau</a></li>
-              <li><a href="#book">Book</a></li>
-              <li><a href="#testimonials">Testimonials</a></li>
-              <li><a href="#contact">Contact</a></li>
-              <li className="nav-cta"><a className="btn btn-gold" href="#contact">Request a Speaker</a></li>
+              {NAV_ITEMS.map(item => (
+                <li key={item.href}><a href={item.href}>{item.label}</a></li>
+              ))}
+              <li className="nav-cta">
+                <a className="btn btn-gold" href={NAV_CTA.href}>{NAV_CTA.label}</a>
+              </li>
             </ul>
           </nav>
+          <MobileNav items={NAV_ITEMS} cta={NAV_CTA} />
         </div>
       </header>
 
