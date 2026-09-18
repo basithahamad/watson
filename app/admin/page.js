@@ -3,9 +3,18 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import './admin.css';
 import { SITE_SCHEMA } from './siteSchema';
+import { RichText } from './RichText';
 
 const CODE_KEY = 'ww_admin_code';
 const BLANK = { speakers: [], testimonials: [] };
+
+// Long-form copy is edited as rich text: bold, italic, colour and links. It is
+// rendered inside a paragraph on the public page, so block formatting
+// (headings, lists) is deliberately unavailable — see RichText's inline mode.
+function InlineRich({ value, onChange }) {
+  const ref = useRef(null);
+  return <RichText inline editorRef={ref} initialHtml={value ?? ''} onChange={onChange} />;
+}
 
 export default function Admin() {
   const [code, setCode] = useState(null);          // null = not signed in yet
@@ -266,12 +275,12 @@ function Editor({ kind, entry, code, onSave, onCancel, onDelete }) {
               <>
                 <div><label>Name *</label><input type="text" required value={f.name} onChange={e => set('name', e.target.value)} /></div>
                 <div><label>Role</label><input type="text" value={f.role} onChange={e => set('role', e.target.value)} /></div>
-                <div className="full"><label>Biography</label><textarea value={f.bio} onChange={e => set('bio', e.target.value)} /></div>
+                <div className="full"><label>Biography</label><InlineRich value={f.bio} onChange={v => set('bio', v)} /></div>
                 <div className="full"><label>Speaking topics (comma separated)</label><input type="text" value={f.topics} onChange={e => set('topics', e.target.value)} /></div>
               </>
             ) : (
               <>
-                <div className="full"><label>Quote *</label><textarea required value={f.quote} onChange={e => set('quote', e.target.value)} /></div>
+                <div className="full"><label>Quote *</label><InlineRich value={f.quote} onChange={v => set('quote', v)} /></div>
                 <div><label>Name</label><input type="text" value={f.name} onChange={e => set('name', e.target.value)} /></div>
                 <div><label>Title / organisation</label><input type="text" value={f.title} onChange={e => set('title', e.target.value)} /></div>
               </>
@@ -331,7 +340,7 @@ function SiteForm({ site, setSite, setDirty, dirty, onSave }) {
                 <div className={f.full ? 'full' : ''} key={f.k}>
                   <label>{f.label}</label>
                   {f.type === 'textarea'
-                    ? <textarea value={d[f.k] ?? ''} onChange={e => setField(sec.key, f.k, e.target.value)} />
+                    ? <InlineRich value={d[f.k]} onChange={v => setField(sec.key, f.k, v)} />
                     : <input type="text" value={d[f.k] ?? ''} onChange={e => setField(sec.key, f.k, e.target.value)} />}
                 </div>
               ))}
@@ -347,13 +356,13 @@ function SiteForm({ site, setSite, setDirty, dirty, onSave }) {
                         <div className="lfields">
                           {l.plain ? (
                             l.type === 'textarea'
-                              ? <textarea value={item ?? ''} onChange={e => setCell(sec.key, l.k, i, null, e.target.value)} />
+                              ? <InlineRich value={item} onChange={v => setCell(sec.key, l.k, i, null, v)} />
                               : <input type="text" value={item ?? ''} onChange={e => setCell(sec.key, l.k, i, null, e.target.value)} />
                           ) : l.cols.map(([ck, clabel, ctype]) => (
                             <div key={ck}>
                               <label>{clabel}</label>
                               {ctype === 'textarea'
-                                ? <textarea style={{ minHeight: 70 }} value={item?.[ck] ?? ''} onChange={e => setCell(sec.key, l.k, i, ck, e.target.value)} />
+                                ? <InlineRich value={item?.[ck]} onChange={v => setCell(sec.key, l.k, i, ck, v)} />
                                 : <input type="text" value={item?.[ck] ?? ''} onChange={e => setCell(sec.key, l.k, i, ck, e.target.value)} />}
                             </div>
                           ))}

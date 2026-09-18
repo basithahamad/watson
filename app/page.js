@@ -56,7 +56,7 @@ export default async function Home() {
           <div className="wrap">
             <span className="eyebrow">{hero.eyebrow}</span>
             <h1>{hero.headline} <em>{hero.headlineEm}</em></h1>
-            <p className="lead">{hero.lead}</p>
+            <p className="lead" dangerouslySetInnerHTML={{ __html: hero.lead || '' }} />
             <div className="hero-actions">
               <a className="btn btn-gold" href="#contact">{hero.cta1}</a>
               <a className="btn btn-outline" href="#speakers">{hero.cta2}</a>
@@ -81,15 +81,15 @@ export default async function Home() {
           <div>
             <span className="eyebrow">{about.eyebrow}</span>
             <h2>{about.heading}</h2>
-            {(about.paragraphs || []).map((p, i) => <p key={i}>{p}</p>)}
+            {(about.paragraphs || []).map((p, i) => <p key={i} dangerouslySetInnerHTML={{ __html: p || '' }} />)}
             <div className="mission-cards">
               <div className="mission-card">
                 <h3>{about.missionHeading}</h3>
-                <p>{about.mission}</p>
+                <p dangerouslySetInnerHTML={{ __html: about.mission || '' }} />
               </div>
               <div className="mission-card">
                 <h3>{about.visionHeading}</h3>
-                <p>{about.vision}</p>
+                <p dangerouslySetInnerHTML={{ __html: about.vision || '' }} />
               </div>
             </div>
           </div>
@@ -101,7 +101,7 @@ export default async function Home() {
           <div className="section-head">
             <span className="eyebrow">{services.eyebrow}</span>
             <h2>{services.heading}</h2>
-            <p>{services.intro}</p>
+            <p dangerouslySetInnerHTML={{ __html: services.intro || '' }} />
           </div>
           <div className="svc-grid">
             {(services.items || []).map((s, i) => (
@@ -109,7 +109,7 @@ export default async function Home() {
                 <span className="svc-num">{String(i + 1).padStart(2, '0')}</span>
                 <div className="svc-icon">{SERVICE_ICONS[i] || SERVICE_ICONS[SERVICE_ICONS.length - 1]}</div>
                 <h3>{s.title}</h3>
-                <p>{s.description}</p>
+                <p dangerouslySetInnerHTML={{ __html: s.description || '' }} />
               </div>
             ))}
           </div>
@@ -121,7 +121,7 @@ export default async function Home() {
           <div className="section-head">
             <span className="eyebrow">{spk.eyebrow}</span>
             <h2>{spk.heading}</h2>
-            <p>{spk.intro}</p>
+            <p dangerouslySetInnerHTML={{ __html: spk.intro || '' }} />
           </div>
           <div className="spk-grid">
             {speakers.map((s, i) => (
@@ -131,7 +131,7 @@ export default async function Home() {
                 <div className="txt">
                   <h3>{s.name}</h3>
                   <div className="role">{s.role}</div>
-                  <p>{s.bio}</p>
+                  <p dangerouslySetInnerHTML={{ __html: s.bio || '' }} />
                   <div className="topics">
                     {(s.topics || []).map((t, j) => <span className="topic" key={j}>{t}</span>)}
                   </div>
@@ -149,7 +149,7 @@ export default async function Home() {
         <div className="wrap">
           <div>
             <h2>{band.heading} <em>{band.headingEm}</em> {band.headingAfter}</h2>
-            <p>{band.text}</p>
+            <p dangerouslySetInnerHTML={{ __html: band.text || '' }} />
           </div>
           <a className="btn btn-gold" href="#contact">{band.ctaLabel}</a>
         </div>
@@ -161,12 +161,12 @@ export default async function Home() {
             <span className="eyebrow">{book.eyebrow}</span>
             <h2>{book.title}</h2>
             <div className="book-sub">{book.meta}</div>
-            <p style={{ marginTop: '1.1rem' }}>{book.description}</p>
+            <p style={{ marginTop: '1.1rem' }} dangerouslySetInnerHTML={{ __html: book.description || '' }} />
           </div>
           <div className="praise">
             {(book.quotes || []).map((q, i) => (
               <blockquote key={i}>
-                <q>{q.quote}</q>
+                <q dangerouslySetInnerHTML={{ __html: q.quote || '' }} />
                 <cite><b>{q.name}</b>{q.affiliation}</cite>
               </blockquote>
             ))}
@@ -179,12 +179,12 @@ export default async function Home() {
           <div className="section-head">
             <span className="eyebrow">{tst.eyebrow}</span>
             <h2>{tst.heading}</h2>
-            <p>{tst.intro}</p>
+            <p dangerouslySetInnerHTML={{ __html: tst.intro || '' }} />
           </div>
           <div className="tst-grid">
             {testimonials.map((t, i) => (
               <div className="tst" key={t.id || i}>
-                <q>{t.quote}</q>
+                <q dangerouslySetInnerHTML={{ __html: t.quote || '' }} />
                 <div className="tst-who">
                   {t.image && (
                     <div className="tst-ava">
@@ -205,7 +205,7 @@ export default async function Home() {
             <div>
               <span className="eyebrow">{site.newsletter?.eyebrow || 'Stay Connected'}</span>
               <h2>{site.newsletter?.heading || 'Insights for leaders, delivered to your inbox'}</h2>
-              <p>{site.newsletter?.text || 'Join our mailing list for leadership insights, speaking availability, and firm updates.'}</p>
+              <p dangerouslySetInnerHTML={{ __html: site.newsletter?.text || 'Join our mailing list for leadership insights, speaking availability, and firm updates.' }} />
             </div>
             <NewsletterForm />
           </div>
@@ -217,7 +217,7 @@ export default async function Home() {
           <div>
             <span className="eyebrow">{contact.eyebrow}</span>
             <h2>{contact.heading}</h2>
-            <p className="contact-intro">{contact.intro}</p>
+            <p className="contact-intro" dangerouslySetInnerHTML={{ __html: contact.intro || '' }} />
             {(contact.items || []).map((c, i) => (
               <div className="contact-item" key={i}>
                 <div className="ci-icon">{CONTACT_ICONS[c.type] || CONTACT_ICONS.email}</div>

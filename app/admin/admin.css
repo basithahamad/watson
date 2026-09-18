@@ -50,6 +50,24 @@
   input[type=text],textarea{width:100%;padding:.75rem .9rem;border:1.5px solid var(--hairline);border-radius:10px;font:inherit;font-size:.9rem;background:var(--paper)}
   input:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px rgba(194,154,74,.16);background:#fff}
   textarea{min-height:110px;resize:vertical}
+
+  /* rich-text editor */
+  .rte-bar{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem;margin-bottom:.45rem;padding:.4rem;border:1.5px solid var(--hairline);border-radius:10px;background:#fbf9f5}
+  .rte-bar button{min-width:32px;height:28px;padding:0 .3rem;border:1.5px solid var(--hairline);background:#fff;border-radius:8px;cursor:pointer;font-weight:700;font-size:.8rem;display:inline-flex;align-items:center;justify-content:center;gap:.3rem;font-family:inherit}
+  .rte-bar button.wide{padding:0 .55rem;font-size:.74rem}
+  .rte-bar button:hover{border-color:var(--gold);color:var(--navy)}
+  .rte-sep{width:1px;height:18px;background:var(--hairline);margin:0 .2rem}
+  .rte-colour{position:relative}
+  .swatch-dot{width:12px;height:12px;border-radius:3px;display:inline-block}
+  .rte-palette{position:absolute;top:32px;left:0;z-index:20;display:flex;gap:.35rem;padding:.5rem;background:#fff;border:1.5px solid var(--hairline);border-radius:10px;box-shadow:0 10px 26px rgba(8,22,39,.18)}
+  .rte-palette .swatch{width:24px;height:24px;border-radius:6px;border:1.5px solid rgba(0,0,0,.14);cursor:pointer;padding:0}
+  .rte-palette .swatch:hover{transform:scale(1.1)}
+  .rte-palette .swatch.custom{background:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--muted);position:relative;overflow:hidden}
+  .rte-palette .swatch.custom input{position:absolute;inset:0;opacity:0;cursor:pointer}
+  .rte{width:100%;min-height:110px;padding:.75rem .9rem;border:1.5px solid var(--hairline);border-radius:10px;font:inherit;font-size:.9rem;background:var(--paper);line-height:1.6}
+  .rte:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px rgba(194,154,74,.16);background:#fff}
+  .rte-inline{min-height:76px}
+  .rte a{color:var(--navy);text-decoration:underline}
   .imgdrop{border:2px dashed var(--hairline);border-radius:12px;padding:1rem;text-align:center;font-size:.82rem;color:var(--muted);cursor:pointer;transition:.2s;background:#fff}
   .imgdrop:hover{border-color:var(--gold);color:var(--navy)}
   .imgdrop img{max-height:150px;border-radius:8px;margin:0 auto .5rem}
