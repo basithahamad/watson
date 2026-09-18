@@ -21,8 +21,15 @@ export default async function Home() {
   const topbar = site.topbar || {};
 
   const speakers = content.speakers || [];
-  // The menu is content, not markup: it is edited in the admin like everything else.
-  const navItems = (site.nav?.items || []).filter(i => i.label && i.href);
+  // The menu is content, not markup: it is edited in the admin like everything
+  // else. A link to a section that isn't rendered would scroll nowhere, so those
+  // drop out on their own and come back when the section does.
+  const hiddenSections = new Set([
+    ...(testimonials.length ? [] : ['#testimonials']),
+    ...(speakers.length ? [] : ['#speakers'])
+  ]);
+  const navItems = (site.nav?.items || [])
+    .filter(i => i.label && i.href && !hiddenSections.has(i.href));
   const navCta = site.nav?.ctaLabel ? { label: site.nav.ctaLabel, href: site.nav.ctaHref || '#contact' } : null;
   // An entry with no quote has nothing to show; skip it rather than render
   // an empty card.
