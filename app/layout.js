@@ -1,11 +1,42 @@
 import './globals.css';
+import { read } from '../lib/store';
 
-export const metadata = {
-  title: "Watson & Watson Associates, LLC — Consulting & Speaker's Bureau",
-  description:
+// Absolute URLs are required for Open Graph and canonical tags; the domain is a
+// deployment fact rather than content, so it comes from the environment.
+export const SITE_URL = process.env.SITE_URL || 'https://watsonwatsonassociates.com';
+
+export async function generateMetadata() {
+  const site = await read('site').catch(() => ({}));
+  const seo = site.seo || {};
+  const title = seo.title || "Watson & Watson Associates, LLC — Consulting & Speaker's Bureau";
+  const description = seo.description ||
     'Strategic communications and consulting at the intersection of higher education, ' +
-    'journalism, and leadership development.'
-};
+    'journalism, and leadership development.';
+  const image = seo.ogImage || '/assets/img/ww-hero.jpg';
+
+  return {
+    metadataBase: new URL(SITE_URL),
+    title,
+    description,
+    applicationName: seo.siteName || 'Watson & Watson Associates',
+    alternates: { canonical: '/' },
+    openGraph: {
+      type: 'website',
+      siteName: seo.siteName || 'Watson & Watson Associates',
+      title,
+      description,
+      url: '/',
+      locale: 'en_US',
+      images: [{ url: image, width: 1800, height: 1350, alt: title }]
+    },
+    twitter: { card: 'summary_large_image', title, description, images: [image] },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 }
+    }
+  };
+}
 
 export const viewport = { width: 'device-width', initialScale: 1 };
 

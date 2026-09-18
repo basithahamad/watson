@@ -1,6 +1,7 @@
 import { read } from '../lib/store';
 import { SERVICE_ICONS, CONTACT_ICONS } from './icons';
 import { MobileNav } from './MobileNav';
+import { SITE_URL } from './layout';
 
 // Content is edited through /admin and must appear immediately, so this page is
 // rendered per request rather than cached at build time.
@@ -36,8 +37,32 @@ export default async function Home() {
     .filter(i => i.label && i.href && !hiddenSections.has(i.href));
   const navCta = site.nav?.ctaLabel ? { label: site.nav.ctaLabel, href: site.nav.ctaHref || '#contact' } : null;
 
+  // Structured data: who this firm is, what it offers and how to reach it.
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfessionalService',
+    name: site.seo?.siteName || 'Watson & Watson Associates, LLC',
+    description: site.seo?.description,
+    url: SITE_URL,
+    logo: `${SITE_URL}/assets/img/ww-logo.png`,
+    image: `${SITE_URL}${site.seo?.ogImage || '/assets/img/ww-hero.jpg'}`,
+    email: topbar.email || undefined,
+    areaServed: 'US',
+    founder: speakers.length
+      ? speakers.map(sp => ({ '@type': 'Person', name: sp.name, jobTitle: sp.role }))
+      : undefined,
+    makesOffer: (services.items || []).map(i => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: i.title }
+    })),
+    sameAs: (contact.socials || []).filter(x => x.url).map(x => x.url)
+  };
+
   return (
     <>
+      <script type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
       <div className="topbar">
         <div className="wrap">
           <span>{topbar.note}</span>
