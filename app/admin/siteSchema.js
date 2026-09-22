@@ -13,6 +13,10 @@ export const SITE_SCHEMA = [
     { k: 'ctaHref', label: 'Button link — e.g. #contact' }],
     lists: [{ k: 'items', label: 'Menu links', cols: [['label', 'Label'], ['href', 'Link — e.g. #services']] }] },
 
+  { key: 'brand', title: 'Logo', hint: 'Shown in the header and the footer', fields: [
+    { k: 'logo', label: 'Logo', type: 'image', full: true },
+    { k: 'logoAlt', label: 'Logo description for screen readers', full: true }] },
+
   { key: 'topbar', title: 'Top Bar', hint: 'The thin strip above the navigation', fields: [
     { k: 'note', label: 'Left-hand note' }, { k: 'email', label: 'Contact email' }] },
 
@@ -21,6 +25,7 @@ export const SITE_SCHEMA = [
     { k: 'headline', label: 'Headline — first part' },
     { k: 'headlineEm', label: 'Headline — highlighted words' },
     { k: 'lead', label: 'Intro paragraph', type: 'textarea', full: true },
+    { k: 'image', label: 'Background photograph', type: 'image', full: true },
     { k: 'cta1', label: 'Button 1 label' }, { k: 'cta2', label: 'Button 2 label' }],
     lists: [{ k: 'stats', label: 'Statistics', cols: [['value', 'Figure'], ['label', 'Description']] }] },
 
@@ -28,6 +33,8 @@ export const SITE_SCHEMA = [
     { k: 'eyebrow', label: 'Section label' }, { k: 'heading', label: 'Heading', full: true },
     { k: 'badgeValue', label: 'Badge figure' }, { k: 'badgeLabel', label: 'Badge caption' },
     { k: 'missionHeading', label: 'Mission heading' }, { k: 'visionHeading', label: 'Vision heading' },
+    { k: 'image', label: 'Photograph beside the text', type: 'image', full: true },
+    { k: 'imageAlt', label: 'Photo description for screen readers', full: true },
     { k: 'mission', label: 'Mission statement', type: 'textarea', full: true },
     { k: 'vision', label: 'Vision statement', type: 'textarea', full: true }],
     lists: [{ k: 'paragraphs', label: 'Body paragraphs', plain: true, type: 'textarea' }] },
@@ -47,7 +54,8 @@ export const SITE_SCHEMA = [
     { k: 'headingEm', label: 'Heading — highlighted words' },
     { k: 'headingAfter', label: 'Heading — remainder' },
     { k: 'ctaLabel', label: 'Button label' },
-    { k: 'text', label: 'Supporting line', type: 'textarea', full: true }] },
+    { k: 'text', label: 'Supporting line', type: 'textarea', full: true },
+    { k: 'image', label: 'Background photograph', type: 'image', full: true }] },
 
   { key: 'book', title: 'Featured Book', fields: [
     { k: 'eyebrow', label: 'Section label' }, { k: 'title', label: 'Book title' },

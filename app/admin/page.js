@@ -16,6 +16,80 @@ function InlineRich({ value, onChange }) {
   return <RichText inline editorRef={ref} initialHtml={value ?? ''} onChange={onChange} />;
 }
 
+
+// Downscale then upload, returning the stored URL. Shared by the speaker and
+// testimonial editors and by the photograph fields in Site Content.
+async function uploadImage(file, code) {
+  const blob = await new Promise((resolve, reject) => {
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return resolve(file);
+    const rd = new FileReader();
+    rd.onerror = () => reject(new Error('Could not read that file.'));
+    rd.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("That file isn't a readable image."));
+      img.onload = () => {
+        const max = 1600, sc = Math.min(1, max / Math.max(img.width, img.height));
+        const cv = document.createElement('canvas');
+        cv.width = Math.round(img.width * sc);
+        cv.height = Math.round(img.height * sc);
+        cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+        cv.toBlob(b => (b ? resolve(b) : reject(new Error('Could not process that image.'))), 'image/jpeg', 0.85);
+      };
+      img.src = rd.result;
+    };
+    rd.readAsDataURL(file);
+  });
+
+  const body = new FormData();
+  body.append('file', blob, file.name || 'photo.jpg');
+  const r = await fetch('/api/upload', { method: 'POST', headers: { 'x-admin-code': code }, body });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || 'Upload failed.');
+  return j.url;
+}
+
+// A stored photograph plus an Upload button, so swapping an image on the public
+// page is a file picker rather than a path typed from memory.
+function ImageField({ label, value, onChange, code }) {
+  const ref = useRef(null);
+  const [msg, setMsg] = useState('');
+
+  async function pick(input) {
+    const file = input.files[0];
+    input.value = '';
+    if (!file) return;
+    setMsg('Uploading…');
+    try {
+      onChange(await uploadImage(file, code));
+      setMsg('');
+    } catch (err) {
+      setMsg(err.message || 'Upload failed');
+    }
+  }
+
+  return (
+    <>
+      <label>{label}</label>
+      <div className="imgfield">
+        <div className="imgfield-thumb" onClick={() => ref.current?.click()}>
+          {value ? <img src={value} alt="" /> : <span>none</span>}
+        </div>
+        <div className="imgfield-main">
+          <input type="text" value={value ?? ''} placeholder="/uploads/… or /assets/img/…"
+            onChange={e => onChange(e.target.value)} />
+          <div className="imgfield-row">
+            <button type="button" className="btn btn-ghost btn-sm" onClick={() => ref.current?.click()}>
+              Upload photo
+            </button>
+            <small>{msg}</small>
+          </div>
+        </div>
+      </div>
+      <input ref={ref} type="file" accept="image/*" style={{ display: 'none' }} onChange={e => pick(e.target)} />
+    </>
+  );
+}
+
 export default function Admin() {
   const [code, setCode] = useState(null);          // null = not signed in yet
   const [doc, setDoc] = useState(BLANK);
@@ -122,7 +196,7 @@ export default function Admin() {
             </div>
 
             {isSite
-              ? <SiteForm site={site} setSite={setSite} setDirty={setDirty} dirty={dirty} onSave={saveSite} />
+              ? <SiteForm site={site} setSite={setSite} setDirty={setDirty} dirty={dirty} onSave={saveSite} code={code} />
               : <ListTable kind={tab} list={list} onEdit={(item, index) => setEditing({ item, index })} />}
           </div>
         )}
@@ -332,7 +406,7 @@ function Editor({ kind, entry, code, onSave, onCancel, onDelete }) {
   );
 }
 
-function SiteForm({ site, setSite, setDirty, dirty, onSave }) {
+function SiteForm({ site, setSite, setDirty, dirty, onSave, code }) {
   if (!site) return <div className="card" style={{ padding: '2rem' }}>Loading…</div>;
 
   const touch = fn => { setSite(prev => { const next = structuredClone(prev); fn(next); return next; }); setDirty(true); };
@@ -359,10 +433,13 @@ function SiteForm({ site, setSite, setDirty, dirty, onSave }) {
             <div className="site-body">
               {(sec.fields || []).map(f => (
                 <div className={f.full ? 'full' : ''} key={f.k}>
-                  <label>{f.label}</label>
-                  {f.type === 'textarea'
-                    ? <InlineRich value={d[f.k]} onChange={v => setField(sec.key, f.k, v)} />
-                    : <input type="text" value={d[f.k] ?? ''} onChange={e => setField(sec.key, f.k, e.target.value)} />}
+                  {f.type !== 'image' && <label>{f.label}</label>}
+                  {f.type === 'image'
+                    ? <ImageField label={f.label} value={d[f.k]} code={code}
+                        onChange={v => setField(sec.key, f.k, v)} />
+                    : f.type === 'textarea'
+                      ? <InlineRich value={d[f.k]} onChange={v => setField(sec.key, f.k, v)} />
+                      : <input type="text" value={d[f.k] ?? ''} onChange={e => setField(sec.key, f.k, e.target.value)} />}
                 </div>
               ))}
 

@@ -20,6 +20,7 @@ export default async function Home() {
   const contact = site.contact || {};
   const footer = site.footer || {};
   const topbar = site.topbar || {};
+  const brand = site.brand || {};
 
   const speakers = content.speakers || [];
   // An entry with no quote has nothing to show; skip it rather than render
@@ -44,7 +45,7 @@ export default async function Home() {
     name: site.seo?.siteName || 'Watson & Watson Associates, LLC',
     description: site.seo?.description,
     url: SITE_URL,
-    logo: `${SITE_URL}/assets/img/ww-logo.png`,
+    logo: `${SITE_URL}${site.brand?.logo || '/assets/img/ww-logo.png'}`,
     image: `${SITE_URL}${site.seo?.ogImage || '/assets/img/ww-hero.jpg'}`,
     email: topbar.email || undefined,
     areaServed: 'US',
@@ -73,7 +74,7 @@ export default async function Home() {
       <header className="nav">
         <div className="wrap">
           <a className="logo" href="#top">
-            <img className="logo-img" src="/assets/img/ww-logo.png" alt="Watson &amp; Watson Associates, LLC" />
+            {brand.logo && <img className="logo-img" src={brand.logo} alt={brand.logoAlt || ''} />}
           </a>
           <nav>
             <ul>
@@ -91,7 +92,16 @@ export default async function Home() {
         </div>
       </header>
 
-      <section className="hero" id="top" style={{ padding: 0 }}>
+      <section
+        className="hero"
+        id="top"
+        style={{
+          padding: 0,
+          backgroundImage:
+            `linear-gradient(100deg,rgba(8,22,39,.94) 32%,rgba(15,39,67,.8) 62%,rgba(15,39,67,.42))` +
+            (hero.image ? `, url('${hero.image}')` : '')
+        }}
+      >
         <div className="hero-inner">
           <div className="wrap">
             <span className="eyebrow">{hero.eyebrow}</span>
@@ -114,7 +124,7 @@ export default async function Home() {
         <div className="wrap">
           <div className="about-photo">
             <div className="frame">
-              <img src="/assets/img/ww-about.jpg" alt="Consulting team collaborating around a table" />
+              {about.image && <img src={about.image} alt={about.imageAlt || ''} />}
             </div>
             <div className="about-badge"><b>{about.badgeValue}</b><span>{about.badgeLabel}</span></div>
           </div>
@@ -185,7 +195,14 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="band">
+      <section
+        className="band"
+        style={{
+          backgroundImage:
+            `linear-gradient(95deg,rgba(8,22,39,.92) 42%,rgba(15,39,67,.68))` +
+            (band.image ? `, url('${band.image}')` : '')
+        }}
+      >
         <div className="wrap">
           <div>
             <h2>{band.heading} <em>{band.headingEm}</em> {band.headingAfter}</h2>
@@ -273,7 +290,7 @@ export default async function Home() {
           <div className="foot-grid">
             <div>
               <div className="logo" style={{ marginBottom: '1.1rem' }}>
-                <img className="logo-img-foot" src="/assets/img/ww-logo.png" alt="Watson &amp; Watson Associates, LLC" />
+                {brand.logo && <img className="logo-img-foot" src={brand.logo} alt={brand.logoAlt || ''} />}
               </div>
               <p>{footer.blurb}</p>
             </div>

@@ -71,9 +71,11 @@
   .nav-cta a::after{display:none}
 
   /* ── Hero ──────────────────────────────── */
-  .hero{position:relative;color:#fff;padding:0;overflow:hidden;background:
-     linear-gradient(100deg,rgba(8,22,39,.94) 32%,rgba(15,39,67,.8) 62%,rgba(15,39,67,.42)),
-     url('/assets/img/ww-hero.jpg') center 42%/cover no-repeat}
+  /* The photograph comes from the site document as an inline style, so it can
+     be changed in the admin; only the overlay that keeps the text readable
+     lives here. */
+  .hero{position:relative;color:#fff;padding:0;overflow:hidden;background-color:var(--navy-deep);
+     background-position:center 42%;background-size:cover;background-repeat:no-repeat}
   .hero-inner{padding:7.5rem 0 0}
   .hero .eyebrow{color:var(--gold-bright)}
   .hero .eyebrow::before{background:var(--gold-bright)}
@@ -138,9 +140,8 @@
   .spk-cta{text-align:center;margin-top:3.2rem}
 
   /* ── Band ──────────────────────────────── */
-  .band{position:relative;padding:5.6rem 0;color:#fff;background:
-     linear-gradient(95deg,rgba(8,22,39,.92) 42%,rgba(15,39,67,.68)),
-     url('/assets/img/ww-speaking.jpg') center 30%/cover no-repeat}
+  .band{position:relative;padding:5.6rem 0;color:#fff;background-color:var(--navy-deep);
+     background-position:center 30%;background-size:cover;background-repeat:no-repeat}
   .band .wrap{display:flex;align-items:center;justify-content:space-between;gap:2.4rem;flex-wrap:wrap}
   .band h2{color:#fff;font-size:2.5rem;max-width:34rem}
   .band h2 em{font-style:italic;color:var(--gold-bright)}

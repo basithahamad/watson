@@ -23,7 +23,8 @@
         "value": "1:1",
         "label": "Tailored consulting engagements built around your goals"
       }
-    ]
+    ],
+    "image": "/assets/img/ww-hero.jpg"
   },
   "about": {
     "eyebrow": "About Us",
@@ -38,7 +39,9 @@
     "missionHeading": "Our Mission",
     "mission": "To equip leaders and institutions with the strategy, storytelling, and voice they need to serve their communities with excellence, integrity, and lasting impact — spanning higher education, culture, and entertainment.",
     "visionHeading": "Our Vision",
-    "vision": "To create a nation of institutions led with clarity and courage, where colleges, universities, and mission-driven organizations are equipped to communicate their purpose, navigate change, and produce the next generation of transformative leaders."
+    "vision": "To create a nation of institutions led with clarity and courage, where colleges, universities, and mission-driven organizations are equipped to communicate their purpose, navigate change, and produce the next generation of transformative leaders.",
+    "image": "/assets/img/ww-about.jpg",
+    "imageAlt": "Consulting team collaborating around a table"
   },
   "services": {
     "eyebrow": "What We Do",
@@ -94,7 +97,8 @@
     "headingEm": "transformative voice",
     "headingAfter": "to your next event",
     "text": "From convocations to executive retreats, our speakers deliver messages that resonate long after the applause.",
-    "ctaLabel": "Check Speaker Availability"
+    "ctaLabel": "Check Speaker Availability",
+    "image": "/assets/img/ww-speaking.jpg"
   },
   "book": {
     "eyebrow": "Featured Book",
@@ -212,5 +216,9 @@
     "description": "Strategic communications and consulting at the intersection of higher education, journalism, and leadership development.",
     "siteName": "Watson & Watson Associates",
     "ogImage": ""
+  },
+  "brand": {
+    "logo": "/assets/img/ww-logo.png",
+    "logoAlt": "Watson & Watson Associates, LLC"
   }
 }

@@ -77,6 +77,10 @@ export function RichText({ editorRef, initialHtml = '', withPullQuote = false, i
 
   const block = tag => run('formatBlock', `<${tag}>`);
 
+  // execCommand's fontSize takes a 1-7 scale rather than pixels; these are the
+  // three a writer actually reaches for.
+  const SIZES = [['Small', '2'], ['Normal', '3'], ['Large', '5']];
+
   function addLink() {
     restore();
     const url = prompt('Link address — include https://', 'https://');
@@ -151,6 +155,14 @@ export function RichText({ editorRef, initialHtml = '', withPullQuote = false, i
             </div>
           )}
         </div>
+
+        <span className="rte-sep" />
+
+        {SIZES.map(([label, value]) => (
+          <Btn key={value} onPress={() => run('fontSize', value)} title={`${label} text`} wide>
+            {label}
+          </Btn>
+        ))}
 
         <Btn onPress={() => run('removeFormat')} title="Strip formatting from the selection" wide>
           Clear
