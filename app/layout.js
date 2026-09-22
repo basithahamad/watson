@@ -12,7 +12,9 @@ export async function generateMetadata() {
   const description = seo.description ||
     'Strategic communications and consulting at the intersection of higher education, ' +
     'journalism, and leadership development.';
-  const image = seo.ogImage || '/assets/img/ww-hero.jpg';
+  // Left unset, app/opengraph-image.js renders the branded card. Setting a
+  // Sharing image in the admin overrides it with a real photograph.
+  const image = seo.ogImage || null;
 
   return {
     metadataBase: new URL(SITE_URL),
@@ -27,9 +29,9 @@ export async function generateMetadata() {
       description,
       url: '/',
       locale: 'en_US',
-      images: [{ url: image, width: 1800, height: 1350, alt: title }]
+      ...(image ? { images: [{ url: image, alt: title }] } : {})
     },
-    twitter: { card: 'summary_large_image', title, description, images: [image] },
+    twitter: { card: 'summary_large_image', title, description, ...(image ? { images: [image] } : {}) },
     robots: {
       index: true,
       follow: true,
