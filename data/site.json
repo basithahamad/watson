@@ -220,5 +220,12 @@
   "brand": {
     "logo": "/assets/img/ww-logo.png",
     "logoAlt": "Watson & Watson Associates, LLC"
+  },
+  "newsletter": {
+    "eyebrow": "Stay Connected",
+    "heading": "Insights for leaders, delivered to your inbox",
+    "text": "Join our mailing list for leadership insights, speaking availability, and firm updates.",
+    "buttonLabel": "Subscribe",
+    "note": "We respect your privacy. Unsubscribe at any time."
   }
 }

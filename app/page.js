@@ -1,6 +1,7 @@
 import { read } from '../lib/store';
 import { SERVICE_ICONS, CONTACT_ICONS } from './icons';
 import { MobileNav } from './MobileNav';
+import { NewsletterForm } from './NewsletterForm';
 import { SITE_URL } from './layout';
 
 // Content is edited through /admin and must appear immediately, so this page is
@@ -21,6 +22,7 @@ export default async function Home() {
   const footer = site.footer || {};
   const topbar = site.topbar || {};
   const brand = site.brand || {};
+  const newsletter = site.newsletter || {};
 
   const speakers = content.speakers || [];
   // An entry with no quote has nothing to show; skip it rather than render
@@ -256,6 +258,21 @@ export default async function Home() {
           </div>
         </div>
       </section>
+      )}
+
+      {newsletter.heading && (
+        <section className="newsletter" id="newsletter">
+          <div className="wrap">
+            <div className="news-inner">
+              <div>
+                <span className="eyebrow">{newsletter.eyebrow}</span>
+                <h2>{newsletter.heading}</h2>
+                <p dangerouslySetInnerHTML={{ __html: newsletter.text || '' }} />
+              </div>
+              <NewsletterForm buttonLabel={newsletter.buttonLabel} note={newsletter.note} />
+            </div>
+          </div>
+        </section>
       )}
 
       <section className="contact" id="contact">

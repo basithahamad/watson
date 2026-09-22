@@ -98,6 +98,7 @@ export default function Admin() {
   const [editing, setEditing] = useState(null);    // {item, index} | null
   const [dirty, setDirty] = useState(false);
   const [toast, setToast] = useState('');
+  const [subs, setSubs] = useState(null);
 
   const headers = useCallback(
     () => ({ 'Content-Type': 'application/json', 'x-admin-code': code || '' }),
@@ -118,6 +119,14 @@ export default function Admin() {
       testimonials: Array.isArray(d.testimonials) ? d.testimonials : []
     })).catch(() => {});
   }, [code]);
+
+  useEffect(() => {
+    if (!code || tab !== 'subscribers' || subs) return;
+    fetch('/api/subscribe', { headers: headers() })
+      .then(r => (r.ok ? r.json() : []))
+      .then(setSubs)
+      .catch(() => setSubs([]));
+  }, [code, tab, subs, headers]);
 
   useEffect(() => {
     if (!code || tab !== 'site' || site) return;
@@ -175,8 +184,8 @@ export default function Admin() {
         ) : (
           <div className="list-view">
             <div className="head">
-              <h1>{isSite ? 'Site Content' : tab === 'speakers' ? 'Speakers' : 'Testimonials'}</h1>
-              {!isSite && (
+              <h1>{{ site: 'Site Content', speakers: 'Speakers', testimonials: 'Testimonials', subscribers: 'Subscribers' }[tab]}</h1>
+              {(tab === 'speakers' || tab === 'testimonials') && (
                 <button className="btn btn-navy" onClick={() => setEditing({ item: {}, index: -1 })}>
                   ＋ New {tab === 'speakers' ? 'Speaker' : 'Testimonial'}
                 </button>
@@ -184,7 +193,8 @@ export default function Admin() {
             </div>
 
             <div className="tabs">
-              {[['speakers', "Speaker's Bureau"], ['testimonials', 'Testimonials'], ['site', 'Site Content']].map(([k, lbl]) => (
+              {[['speakers', "Speaker's Bureau"], ['testimonials', 'Testimonials'],
+                ['site', 'Site Content'], ['subscribers', 'Subscribers']].map(([k, lbl]) => (
                 <button key={k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{lbl}</button>
               ))}
             </div>
@@ -192,12 +202,16 @@ export default function Admin() {
             <div className="note">
               {isSite
                 ? 'Edit the wording on the public page. Layout, colours and fonts are fixed by the design and are not editable here.'
-                : 'Changes appear on the site immediately.'}
+                : tab === 'subscribers'
+                  ? 'Everyone who has signed up through the newsletter form. Download the CSV to import them into your mailing service.'
+                  : 'Changes appear on the site immediately.'}
             </div>
 
             {isSite
               ? <SiteForm site={site} setSite={setSite} setDirty={setDirty} dirty={dirty} onSave={saveSite} code={code} />
-              : <ListTable kind={tab} list={list} onEdit={(item, index) => setEditing({ item, index })} />}
+              : tab === 'subscribers'
+                ? <SubscriberTable subs={subs} />
+                : <ListTable kind={tab} list={list} onEdit={(item, index) => setEditing({ item, index })} />}
           </div>
         )}
       </main>
@@ -243,6 +257,66 @@ function Gate({ onIn }) {
         </form>
         <div className="err">{err}</div>
       </div>
+    </div>
+  );
+}
+
+
+// Download the list as CSV. Whichever service the newsletter goes out through
+// — Mailchimp, Brevo, Constant Contact — imports a file like this.
+const CRLF = String.fromCharCode(13, 10);   // what spreadsheets expect in a CSV
+
+function downloadCsv(subs) {
+  const esc = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const rows = [['Email', 'Name', 'Signed up'],
+    ...subs.map(s => [s.email, s.name || '', (s.createdAt || '').slice(0, 10)])];
+  const blob = new Blob([rows.map(r => r.map(esc).join(',')).join(CRLF)],
+    { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `subscribers-${(new Date()).toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function SubscriberTable({ subs }) {
+  if (!subs) return <div className="card" style={{ padding: '2rem' }}>Loading…</div>;
+  const copyAll = () => navigator.clipboard?.writeText(subs.map(s => s.email).join(', '));
+  const fmt = iso => (iso ? new Date(iso).toLocaleDateString('en-US',
+    { year: 'numeric', month: 'short', day: 'numeric' }) : '');
+
+  return (
+    <div className="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Email</th><th className="t-hide">Name</th><th>Signed up</th>
+            <th style={{ textAlign: 'right' }}>
+              {subs.length > 0 && (
+                <span style={{ display: 'inline-flex', gap: '.4rem' }}>
+                  <button className="btn btn-ghost btn-sm" onClick={copyAll}>Copy all emails</button>
+                  <button className="btn btn-ghost btn-sm" onClick={() => downloadCsv(subs)}>Download CSV</button>
+                </span>
+              )}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {subs.map(s => (
+            <tr key={s.id}>
+              <td className="t-main">{s.email}</td>
+              <td className="t-hide">{s.name || '—'}</td>
+              <td>{fmt(s.createdAt)}</td>
+              <td />
+            </tr>
+          ))}
+          {!subs.length && (
+            <tr><td colSpan={4} style={{ textAlign: 'center', color: '#999', padding: '2rem' }}>
+              No sign-ups yet.
+            </td></tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }
