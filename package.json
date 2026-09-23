@@ -8,7 +8,8 @@
     "dev": "next dev -p 8743",
     "build": "next build",
     "start": "next start -p 8743",
-    "db:migrate": "node --env-file=.env scripts/migrate.mjs"
+    "db:migrate": "node --env-file=.env scripts/migrate.mjs",
+    "newsletter:sync": "node --env-file=.env scripts/sync-subscribers.mjs"
   },
   "dependencies": {
     "mysql2": "^3.11.5",
