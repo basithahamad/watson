@@ -226,7 +226,10 @@ export default async function Home() {
             {(book.quotes || []).map((q, i) => (
               <blockquote key={i}>
                 <q dangerouslySetInnerHTML={{ __html: q.quote || '' }} />
-                <cite><b>{q.name}</b>{q.affiliation}</cite>
+                <cite>
+                  <b>{q.name}</b>
+                  <span dangerouslySetInnerHTML={{ __html: q.affiliation || '' }} />
+                </cite>
               </blockquote>
             ))}
           </div>
