@@ -220,3 +220,32 @@ section is a JSON column.
 - Privacy Policy and Terms of Use link to `#`.
 - Uploaded files are never garbage-collected — replacing a photo leaves the old
   file on disk.
+
+---
+
+## Verifying a deploy
+
+`next build` compiles the admin but never exercises it. Every regression this
+project has shipped to the client — fields that accepted typing and discarded
+it, an Enter key bound to a command no browser implements, a paste that pulled
+Word's fonts into the page — was green in the build and obvious in a browser.
+
+After every deploy:
+
+```bash
+npm run test:admin -- https://watsonwatsonassociates.com "$ADMIN_CODE"
+```
+
+It signs in, types into a field, saves, reloads, confirms the change reached
+both the database and the public page, exercises paste cleaning, then restores
+the original value exactly. Safe against the live site: the field it edits is
+the SEO description, which has no visible trace beyond a meta tag.
+
+One-off on a new machine:
+
+```bash
+npx playwright install chromium
+```
+
+If it fails, roll back rather than leaving it: `git revert`, then `sudo
+deploy-watson`.
