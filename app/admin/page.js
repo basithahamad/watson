@@ -224,6 +224,10 @@ export default function Admin() {
 function Gate({ onIn }) {
   const [v, setV] = useState('');
   const [err, setErr] = useState('');
+  // Until this flips, submitting would be handled by the browser rather than
+  // by onSubmit, sending the code as a query string.
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
   async function submit() {
     // Deliberately invalid body: a correct code returns 400 (rejected before any
     // write), a wrong one returns 401. Nothing is ever modified by signing in.
@@ -245,15 +249,17 @@ function Gate({ onIn }) {
         {/* A real form with a password field is what makes a browser or password
             manager offer to save and autofill the code. A text input outside a
             form is ignored by all of them. */}
-        <form onSubmit={e => { e.preventDefault(); submit(); }}>
+        <form method="post" onSubmit={e => { e.preventDefault(); submit(); }}>
           <input type="text" name="username" autoComplete="username"
             value="Content Editor" readOnly aria-hidden="true" tabIndex={-1}
             style={{ display: 'none' }} />
           <input type="password" name="password" autoComplete="current-password"
             value={v} placeholder="Access code" aria-label="Access code"
             onChange={e => setV(e.target.value)} />
-          <button type="submit" className="btn btn-navy"
-            style={{ width: '100%', justifyContent: 'center', marginTop: '.7rem' }}>Sign In</button>
+          <button type="submit" className="btn btn-navy" disabled={!ready}
+            style={{ width: '100%', justifyContent: 'center', marginTop: '.7rem' }}>
+            {ready ? 'Sign In' : 'Loading…'}
+          </button>
         </form>
         <div className="err">{err}</div>
       </div>
