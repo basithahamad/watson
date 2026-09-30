@@ -555,8 +555,13 @@ function SiteForm({ site, setSite, setDirty, dirty, onSave, code }) {
         );
       })}
       <div className="site-foot">
-        <span className="dirty-note">{dirty ? 'Unsaved changes' : ''}</span>
-        <button className="btn btn-gold" onClick={onSave}>Save &amp; Publish</button>
+        <span className="dirty-note">{dirty ? 'Unsaved changes' : 'Everything saved'}</span>
+        {/* Disabled until something actually changes: a field whose typing
+            never reached the form would otherwise look saveable and quietly
+            write the old value back. */}
+        <button className="btn btn-gold" onClick={onSave} disabled={!dirty}>
+          {dirty ? 'Save & Publish' : 'No changes'}
+        </button>
       </div>
     </>
   );

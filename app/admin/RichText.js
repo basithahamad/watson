@@ -181,7 +181,7 @@ export function RichText({ editorRef, initialHtml = '', withPullQuote = false, i
         // In inline mode Enter would open a new block; a line break keeps the
         // value valid inside the paragraph it will be rendered in.
         onKeyDown={inline ? e => {
-          if (e.key === 'Enter') { e.preventDefault(); run('insertLineBreak'); }
+          if (e.key === 'Enter') { e.preventDefault(); run('insertHTML', '<br>'); }
         } : undefined}
       />
     </>
